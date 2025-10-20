@@ -1,12 +1,9 @@
 import express from "express";
 import db from "../../scripts/init-db.js";
+import { getUserConsents } from "../controllers/consent.controller.js";
 
 const router = express.Router();
 
-router.get("/:id/consents", (req, res) => {
-  const stmt = db.prepare("SELECT * FROM consents WHERE userId = ?");
-  const data = stmt.all(req.params.id);
-  res.json(data);
-});
+router.get("/:id/consents", getUserConsents);
 
 export default router;
