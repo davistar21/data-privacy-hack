@@ -1,6 +1,6 @@
 // src/components/ConsentChart.tsx
 import React, { useMemo } from "react";
-import { useConsentStore } from "../stores/ConsentStore";
+import { useConsentStore } from "../../stores/ConsentStore";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const COLORS = ["#10B981", "#F59E0B", "#EF4444", "#06B6D4"];

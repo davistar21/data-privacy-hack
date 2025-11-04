@@ -10,6 +10,10 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Toaster } from "sonner";
+import { SidebarProvider } from "./components/ui/sidebar";
+import AppSidebar from "./components/layout/Sidebar";
+import MyLayout from "./components/layout/Layout";
+import { CustomToaster } from "./components/CustomToaster";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,7 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <Toaster />
+        <CustomToaster />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -44,7 +48,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
+      <MyLayout>
+        <Outlet />
+      </MyLayout>
+    </SidebarProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
@@ -64,7 +81,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main className="pt-16 md:p-4 container mx-auto">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (

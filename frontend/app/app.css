@@ -7,18 +7,23 @@
   --font-sans:
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --card: "f0f0f0";
 }
 
 /* Base dark mode support */
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
+  @apply !bg-white text-foreground;
+  scroll-behavior: smooth;
+  margin: 0;
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
-
+button,
+a {
+  cursor: pointer;
+}
 /* Define theme-level variables and semantic mappings */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -62,44 +67,56 @@ body {
   --color-sidebar-ring: var(--sea-dark-300);
 }
 
-/* Color values as CSS variables */
 :root {
   --radius: 0.625rem;
 
-  --sea-dark-50: #eaf6f8;
-  --sea-dark-100: #d4eef1;
-  --sea-dark-200: #a9dee3;
-  --sea-dark-300: #7fcfd4;
-  --sea-dark-400: #55bfc6;
-  --sea-dark-500: #2aaeb6;
-  --sea-dark-600: #218a8f;
-  --sea-dark-700: #186668;
-  --sea-dark-800: #0f3f40;
-  --sea-dark-900: #061717;
+  /* Vivid teal-based palette */
+  --sea-dark-50: #e5f8f7;
+  --sea-dark-100: #c7f0ef;
+  --sea-dark-200: #96e0de;
+  --sea-dark-300: #63cfcf;
+  --sea-dark-400: #33bdbd;
+  --sea-dark-500: #0e8b8b;
+  --sea-dark-600: #0c7171;
+  --sea-dark-700: #095858;
+  --sea-dark-800: #063e3e;
+  --sea-dark-900: #032525;
+
+  /* Sidebar light mode (shadcn-style) */
+  --sidebar: hsl(0 0% 98%);
+
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: var(--sea-dark-500);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: var(--sea-dark-100);
+  --sidebar-accent-foreground: var(--sea-dark-800);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: var(--sea-dark-400);
 }
 
-/* Dark mode overrides */
 .dark {
+  /* Dark mode vivid teal */
   --color-background: var(--sea-dark-900);
   --color-foreground: var(--sea-dark-50);
   --color-card: var(--sea-dark-800);
   --color-card-foreground: var(--sea-dark-50);
   --color-popover: var(--sea-dark-800);
   --color-popover-foreground: var(--sea-dark-50);
-  --color-primary: var(--sea-dark-300);
+  --color-primary: var(--sea-dark-400);
   --color-primary-foreground: var(--sea-dark-900);
   --color-secondary: var(--sea-dark-600);
   --color-secondary-foreground: var(--sea-dark-50);
   --color-muted: var(--sea-dark-700);
   --color-muted-foreground: var(--sea-dark-200);
-  --color-accent: var(--sea-dark-400);
+  --color-accent: var(--sea-dark-300);
   --color-accent-foreground: var(--sea-dark-50);
-  --color-destructive: #f87171;
+  --color-destructive: #ef4444;
 
   --color-border: var(--sea-dark-700);
   --color-input: var(--sea-dark-800);
-  --color-ring: var(--sea-dark-600);
+  --color-ring: var(--sea-dark-400);
 
+  /* Charts, sidebar, etc. */
   --color-chart-1: var(--sea-dark-200);
   --color-chart-2: var(--sea-dark-300);
   --color-chart-3: var(--sea-dark-400);
@@ -113,7 +130,17 @@ body {
   --color-sidebar-accent: var(--sea-dark-600);
   --color-sidebar-accent-foreground: var(--sea-dark-50);
   --color-sidebar-border: var(--sea-dark-700);
-  --color-sidebar-ring: var(--sea-dark-600);
+  --color-sidebar-ring: var(--sea-dark-500);
+
+  /* Sidebar overrides */
+  --sidebar: var(--sea-dark-900);
+  --sidebar-foreground: white;
+  --sidebar-primary: var(--sea-dark-400);
+  --sidebar-primary-foreground: var(--sea-dark-900);
+  --sidebar-accent: var(--sea-dark-700);
+  --sidebar-accent-foreground: var(--sea-dark-50);
+  --sidebar-border: var(--sea-dark-700);
+  --sidebar-ring: var(--sea-dark-500);
 }
 
 /* Tailwind base layer */
@@ -122,6 +149,9 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply !bg-white text-foreground;
   }
+}
+@utility scrollbar {
+  scrollbar-width: none;
 }
