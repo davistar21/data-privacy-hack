@@ -14,6 +14,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../components/ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const NotificationsPage: React.FC = () => {
   const { getUnreadCount, markAsRead, getPage, notifications } =
@@ -120,7 +121,7 @@ const NotificationsPage: React.FC = () => {
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
               >
-                Prev
+                <ChevronLeft />
               </Button>
               <span className="text-sm text-[color:var(--muted)]">
                 Page {page} of {totalPages}
@@ -131,7 +132,7 @@ const NotificationsPage: React.FC = () => {
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                <ChevronRight />
               </Button>
             </div>
           )}

@@ -117,9 +117,7 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 px-6">
-      <h1 className="text-3xl font-bold text-gray-800">
-        Web Privacy Dashboard
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-800">Cookie Tracker</h1>
 
       <p className="mt-2 text-lg text-gray-600">
         Manage cookie categories per site, view risk warnings, and generate

@@ -23,7 +23,7 @@ export function Header({ isAdmin = false }: { isAdmin?: boolean }) {
   // Track scroll position
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 10); // Toggle sticky class when scrolled past 100px
+      // setIsSticky(window.scrollY > 10); // Toggle sticky class when scrolled past 100px
     };
 
     // Add scroll event listener
@@ -40,7 +40,7 @@ export function Header({ isAdmin = false }: { isAdmin?: boolean }) {
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className={`${isSticky ? "fixed md:top-3 max-md:left-1/2 max-md:-translate-x-1/2 " : "absolute top-3 left-1/2 -translate-x-1/2"} w-[95%] max-w-6xl h-14 flex items-center justify-between gap-4 rounded-xl border border-[var(--color-foreground)]/40 bg-[var(--color-card)]/80 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.05)] px-4 md:px-6 z-11`}
+        className={`${"absolute top-3 left-1/2 -translate-x-1/2"} w-[95%] max-w-6xl h-14 flex items-center justify-between gap-4 rounded-xl border border-[var(--color-foreground)]/40 bg-[var(--color-card)]/80 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.05)] px-4 md:px-6 z-11`}
       >
         {!isAdmin && (
           <SidebarTrigger className="text-s=econdary-foreground" size="lg" />
