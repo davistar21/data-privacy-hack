@@ -1,0 +1,71 @@
+import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react";
+
+import { Button } from "../components/ui/button";
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "../components/ui/sidebar";
+import { useLocation, useNavigate } from "react-router";
+
+export function NavMain({
+  items,
+}: {
+  items: {
+    title: string;
+    url: string;
+    icon?: Icon;
+  }[];
+}) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupContent className="flex flex-col gap-2">
+        {/* <SidebarMenu>
+          <SidebarMenuItem className="flex items-center gap-2">
+            <SidebarMenuButton
+              tooltip="Quick Create"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+            >
+              <IconCirclePlusFilled />
+              <span>Quick Create</span>
+            </SidebarMenuButton>
+            <Button
+              size="icon"
+              className="size-8 group-data-[collapsible=icon]:opacity-0"
+              variant="outline"
+            >
+              <IconMail />
+              <span className="sr-only">Inbox</span>
+            </Button>
+          </SidebarMenuItem>
+        </SidebarMenu> */}
+        <SidebarMenu>
+          {items.map((item) => {
+            const onPage = location.pathname.startsWith(item.url);
+
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  className={`${onPage ? `bg-sidebar-accent  text-muted-foreground` : ""} transition-colors`}
+                  tooltip={item.title}
+                  onClick={() => navigate(item.url)}
+                >
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  {onPage && (
+                    <div className="ml-auto h-2 w-2 rounded-full bg-teal-600 animate-pulse"></div>
+                  )}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}

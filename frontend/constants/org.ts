@@ -1,0 +1,190 @@
+import type { Organization } from "~/types";
+
+export const orgs: Organization[] = [
+  {
+    id: "zenith",
+    name: "Zenith Bank",
+    description: "Retail & corporate bank",
+    logoUrl: "/zenith-logo.png",
+  },
+  { id: "gtbank", name: "GTBank", description: "Commercial banking services" },
+  {
+    id: "firstbank",
+    name: "First Bank of Nigeria",
+    description: "Financial institution",
+  },
+  {
+    id: "uba",
+    name: "United Bank for Africa",
+    description: "Pan-African financial services",
+  },
+  {
+    id: "accessbank",
+    name: "Access Bank",
+    description: "Digital-first banking solutions",
+  },
+  {
+    id: "fidelitybank",
+    name: "Fidelity Bank",
+    description: "Retail and SME-focused banking",
+  },
+  {
+    id: "unionbank",
+    name: "Union Bank",
+    description: "Legacy financial institution",
+  },
+  {
+    id: "sterlingbank",
+    name: "Sterling Bank",
+    description: "Agile, sustainable finance",
+  },
+  { id: "opay", name: "OPay", description: "Fintech mobile payments platform" },
+  {
+    id: "palmpay",
+    name: "PalmPay",
+    description: "Mobile payment and wallet app",
+  },
+  {
+    id: "flutterwave",
+    name: "Flutterwave",
+    description: "Payment infrastructure for businesses",
+  },
+  {
+    id: "interswitch",
+    name: "Interswitch",
+    description: "Payment processing technology",
+  },
+  {
+    id: "lagos_hospital",
+    name: "Lagos Hospital",
+    description: "Healthcare provider",
+  },
+  {
+    id: "nhis",
+    name: "National Health Insurance Scheme",
+    description: "Public health insurance body",
+  },
+  { id: "ecomshop", name: "EcomShop", description: "Online marketplace" },
+  { id: "jumia", name: "Jumia Nigeria", description: "E-commerce platform" },
+  { id: "konga", name: "Konga", description: "E-commerce and logistics" },
+  { id: "mobiletel", name: "MobileTel", description: "Telecom operator" },
+  {
+    id: "mtn",
+    name: "MTN Nigeria",
+    description: "Telecommunications provider",
+  },
+  {
+    id: "airtel",
+    name: "Airtel Nigeria",
+    description: "Telecom and broadband services",
+  },
+  { id: "glo", name: "Globacom", description: "Telecommunication network" },
+  { id: "9mobile", name: "9mobile", description: "Telecommunication services" },
+  {
+    id: "nibss",
+    name: "NIBSS",
+    description: "Nigeria Inter-Bank Settlement System",
+  },
+  {
+    id: "cbn",
+    name: "Central Bank of Nigeria",
+    description: "Monetary authority of Nigeria",
+  },
+  {
+    id: "inec",
+    name: "INEC",
+    description: "Independent National Electoral Commission",
+  },
+  { id: "frsc", name: "FRSC", description: "Federal Road Safety Corps" },
+  {
+    id: "lasg",
+    name: "Lagos State Government",
+    description: "State government body",
+  },
+  { id: "firs", name: "FIRS", description: "Federal Inland Revenue Service" },
+  {
+    id: "naicom",
+    name: "NAICOM",
+    description: "Insurance regulatory authority",
+  },
+  {
+    id: "insurance_ng",
+    name: "Leadway Assurance",
+    description: "Insurance and risk management",
+  },
+  {
+    id: "covenant_uni",
+    name: "Covenant University",
+    description: "Private higher education institution",
+  },
+  {
+    id: "unilag",
+    name: "University of Lagos",
+    description: "Federal university",
+  },
+  {
+    id: "oau",
+    name: "Obafemi Awolowo University",
+    description: "Public university",
+  },
+  { id: "ncc", name: "NCC", description: "Nigerian Communications Commission" },
+  {
+    id: "nipost",
+    name: "NIPOST",
+    description: "Postal and logistics services",
+  },
+  {
+    id: "dhl_ng",
+    name: "DHL Nigeria",
+    description: "Courier and delivery services",
+  },
+  {
+    id: "fedex_ng",
+    name: "FedEx Nigeria",
+    description: "Logistics and transport",
+  },
+  { id: "bolt_ng", name: "Bolt Nigeria", description: "Ride-hailing platform" },
+  {
+    id: "uber_ng",
+    name: "Uber Nigeria",
+    description: "Transportation and delivery",
+  },
+  { id: "bet9ja", name: "Bet9ja", description: "Online gaming and betting" },
+  {
+    id: "nairabet",
+    name: "NairaBet",
+    description: "Online betting and gaming",
+  },
+  { id: "dstv", name: "DStv Nigeria", description: "Cable TV service" },
+  { id: "gotv", name: "GOtv", description: "Digital TV provider" },
+  {
+    id: "multichoice",
+    name: "MultiChoice Nigeria",
+    description: "Media and entertainment",
+  },
+  { id: "nairaland", name: "Nairaland", description: "Online community forum" },
+  { id: "paga", name: "Paga", description: "Mobile money platform" },
+  {
+    id: "moniepoint",
+    name: "Moniepoint",
+    description: "Digital banking and agency network",
+  },
+  { id: "remita", name: "Remita", description: "Payment collection platform" },
+  { id: "jumia_food", name: "Jumia Food", description: "Online food delivery" },
+  {
+    id: "shoprite",
+    name: "Shoprite Nigeria",
+    description: "Retail supermarket chain",
+  },
+  { id: "spar", name: "SPAR Nigeria", description: "Retail and grocery" },
+  {
+    id: "ikeja_electric",
+    name: "Ikeja Electric",
+    description: "Electricity distribution company",
+  },
+  {
+    id: "eko_electric",
+    name: "Eko Disco",
+    description: "Power distribution company",
+  },
+];
