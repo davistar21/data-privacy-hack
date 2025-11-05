@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useMarketplaceStore } from "../../stores/MarketPlaceStore";
 import type { Organization, ReuseOffer } from "~/types";
-import dayjs from "dayjs";
 import {
   Card,
   CardContent,
@@ -288,7 +287,7 @@ export default function OffersManagementPage() {
                     <div className="text-xs text-gray-500">Expires</div>
                     <div className="font-medium">
                       {offer.expiresAt
-                        ? dayjs(new Date(offer.expiresAt)).format("DD/MM/YYYY")
+                        ? new Date(offer.expiresAt).toLocaleDateString()
                         : "—"}
                     </div>
                   </div>
