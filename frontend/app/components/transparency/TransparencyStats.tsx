@@ -39,7 +39,7 @@ export const TransparencyStats: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-semibold">{totals.important}</div>
-          <div className="flex items-center gap-2 mt-1 text-xs">
+          <div className="flex md:flex-row flex-col items-start md:items-center gap-2 mt-1 text-xs">
             <Badge className="bg-yellow-800/20 text-yellow-200">Review</Badge>
             <span className="text-[color:var(--muted)]">
               Action recommended

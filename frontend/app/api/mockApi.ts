@@ -1,4 +1,5 @@
 // src/api/mockApi.ts
+import { formatText } from "../utils/formatText";
 import { consents } from "../../constants/consent";
 import { orgs } from "../../constants/org";
 import type {
@@ -83,7 +84,7 @@ export async function postRevocation(payload: RevocationPayload) {
       type: "revocation",
       userId: payload.userId,
       orgId: payload.orgId,
-      message: `Revocation: User ${payload.userId} revoked ${payload.purpose} for fields ${payload.fields.join(", ")}.`,
+      message: `Revocation: You revoked ${formatText(payload.purpose)} for fields: ${payload.fields.map((f) => formatText(f, "uppercase")).join(", ")}.`,
       timestamp,
       status: "completed",
       category: randomCategory,

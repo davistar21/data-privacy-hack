@@ -105,6 +105,7 @@ import {
 } from "../components/ui/tabs";
 import { ArrowUpRight } from "lucide-react";
 import { useConsentStore } from "../stores/ConsentStore";
+import { formatText } from "../utils/formatText";
 
 // export const schema = z.object({
 //   id: z.number(),
@@ -198,8 +199,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             : "secondary";
       return (
         <div className="w-32">
-          <Badge variant={color} className="text-muted-foreground px-1.5">
-            {row.original.type}
+          <Badge
+            variant={color}
+            className="text-foreground bg-accent/50 border-border px-1.5"
+          >
+            {formatText(row.original.type)}
           </Badge>
         </div>
       );
@@ -412,20 +416,20 @@ export function DataTable({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="outline">Outline</SelectItem>
-            <SelectItem value="past-performance">Past Performance</SelectItem>
-            <SelectItem value="key-personnel">Key Personnel</SelectItem>
-            <SelectItem value="focus-documents">Focus Documents</SelectItem>
+            <SelectItem value="past-performance">Cookies Revoked</SelectItem>
+            <SelectItem value="key-personnel">Data Reuses</SelectItem>
+            <SelectItem value="focus-documents">Offers Accepted</SelectItem>
           </SelectContent>
         </Select>
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="outline">Outline</TabsTrigger>
           <TabsTrigger value="past-performance">
-            Past Performance <Badge variant="secondary">3</Badge>
+            Cookies Revoked<Badge variant="secondary">3</Badge>
           </TabsTrigger>
           <TabsTrigger value="key-personnel">
-            Key Personnel <Badge variant="secondary">2</Badge>
+            Data Reuses<Badge variant="secondary">2</Badge>
           </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
+          <TabsTrigger value="focus-documents">Offers Accepted</TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -655,11 +659,13 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.message}</DrawerTitle>
           <DrawerDescription>
-            Showing total visitors for the last 6 months
+            {item.message.includes("cookie")
+              ? "Action related to cookie consent: enabling, disabling, or allowing cookies."
+              : "This entry refers to the status of data subject consents or access requests."}
           </DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          {!isMobile && (
+          {/* {!isMobile && (
             <>
               <ChartContainer config={chartConfig}>
                 <AreaChart
@@ -704,18 +710,18 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               <Separator />
               <div className="grid gap-2">
                 <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month{" "}
+                  Trending up by 5.2% this month
                   <IconTrendingUp className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just
-                  some random text to test the layout. It spans multiple lines
-                  and should wrap around.
+                  This graph displays user activity over the last 6 months. You
+                  can view and analyze visitor consent patterns and other
+                  actions taken in the system.
                 </div>
               </div>
               <Separator />
             </>
-          )}
+          )} */}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="header">Header</Label>
@@ -723,57 +729,56 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Type</Label>
+                <Label htmlFor="type">Action Type</Label>
                 <Select defaultValue={item.type}>
                   <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
+                    <SelectValue placeholder="Select an action type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Table of Contents">
-                      Table of Contents
+                    <SelectItem value="Consent Revoked">
+                      Consent Revoked
                     </SelectItem>
-                    <SelectItem value="Executive Summary">
-                      Executive Summary
+                    <SelectItem value="Consent Granted">
+                      Consent Granted
                     </SelectItem>
-                    <SelectItem value="Technical Approach">
-                      Technical Approach
+                    <SelectItem value="Data Request">
+                      Data Access Request
                     </SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Capabilities">Capabilities</SelectItem>
-                    <SelectItem value="Focus Documents">
-                      Focus Documents
+                    <SelectItem value="Cookie Enabled">
+                      Cookie Enabled
                     </SelectItem>
-                    <SelectItem value="Narrative">Narrative</SelectItem>
-                    <SelectItem value="Cover Page">Cover Page</SelectItem>
+                    <SelectItem value="Cookie Disabled">
+                      Cookie Disabled
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status">Action Status</Label>
                 <Select defaultValue={item.status}>
                   <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
+                    <SelectValue placeholder="Select action status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Done">Done</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
                     <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Not Started">Not Started</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={item.timestamp} />
+                <Label htmlFor="target">Targeted Entity</Label>
+                <Input id="target" defaultValue={item.orgId} />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={item.orgId} />
+                <Label htmlFor="limit">Action Limit</Label>
+                <Input id="limit" defaultValue={item.timestamp} />
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
+              <Label htmlFor="reviewer">Reviewed By</Label>
               <Select defaultValue={item.status}>
                 <SelectTrigger id="reviewer" className="w-full">
                   <SelectValue placeholder="Select a reviewer" />
@@ -799,311 +804,3 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     </Drawer>
   );
 }
-
-// "use client";
-
-// import * as React from "react";
-// import {
-//   flexRender,
-//   getCoreRowModel,
-//   getSortedRowModel,
-//   getPaginationRowModel,
-//   useReactTable,
-//   type ColumnDef,
-// } from "@tanstack/react-table";
-// import {
-//   DndContext,
-//   PointerSensor,
-//   useSensor,
-//   useSensors,
-//   closestCenter,
-// } from "@dnd-kit/core";
-// import {
-//   arrayMove,
-//   SortableContext,
-//   useSortable,
-//   verticalListSortingStrategy,
-// } from "@dnd-kit/sortable";
-// import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-
-// import { z } from "zod";
-// import { Checkbox } from "../components/ui/checkbox";
-// import { Button } from "../components/ui/button";
-// import { Badge } from "../components/ui/badge";
-// import {
-//   DropdownMenu,
-//   DropdownMenuTrigger,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-// } from "../components/ui/dropdown-menu";
-// import { IconDotsVertical, IconGripVertical } from "@tabler/icons-react";
-
-// import { useConsentStore } from "../stores/ConsentStore";
-// // import { type AuditLogEntry } from "~/types";
-// import { cn } from "../lib/utils";
-// // import { DragHandle } from "@/components/ui/drag-handle";
-
-// function DragHandle({ id }: { id: number }) {
-//   const { attributes, listeners } = useSortable({
-//     id,
-//   });
-
-//   return (
-//     <Button
-//       {...attributes}
-//       {...listeners}
-//       variant="ghost"
-//       size="icon"
-//       className="text-muted-foreground size-7 hover:bg-transparent"
-//     >
-//       <IconGripVertical className="text-muted-foreground size-3" />
-//       <span className="sr-only">Drag to reorder</span>
-//     </Button>
-//   );
-// }
-
-// export const schema = z.object({
-//   id: z.string(),
-//   type: z.enum(["revocation", "regrant", "incident", "other"]),
-//   userId: z.string(),
-//   orgId: z.string(),
-//   message: z.string(),
-//   timestamp: z.string(),
-//   status: z.enum(["pending", "completed", "failed"]).optional(),
-//   category: z.enum(["important", "sensitive", "normal"]).optional(),
-//   isNotification: z.boolean().optional(),
-// });
-
-// export type TableEntry = z.infer<typeof schema>;
-
-// // ---------- Columns ----------
-// const columns: ColumnDef<TableEntry>[] = [
-//   {
-//     id: "drag",
-//     header: () => null,
-//     cell: ({ row }) => <DragHandle id={Number(row.original.id)} />,
-//   },
-//   {
-//     id: "select",
-//     header: ({ table }) => (
-//       <div className="flex items-center justify-center">
-//         <Checkbox
-//           checked={
-//             table.getIsAllPageRowsSelected() ||
-//             (table.getIsSomePageRowsSelected() && "indeterminate")
-//           }
-//           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//           aria-label="Select all"
-//         />
-//       </div>
-//     ),
-//     cell: ({ row }) => (
-//       <div className="flex items-center justify-center">
-//         <Checkbox
-//           checked={row.getIsSelected()}
-//           onCheckedChange={(value) => row.toggleSelected(!!value)}
-//           aria-label="Select row"
-//         />
-//       </div>
-//     ),
-//     enableSorting: false,
-//     enableHiding: false,
-//   },
-//   {
-//     accessorKey: "timestamp",
-//     header: "Date",
-//     cell: ({ row }) => (
-//       <div className="text-sm text-muted-foreground">
-//         {new Date(row.original.timestamp).toLocaleString()}
-//       </div>
-//     ),
-//   },
-//   {
-//     accessorKey: "type",
-//     header: "Type",
-//     cell: ({ row }) => {
-//       const color =
-//         row.original.type === "revocation"
-//           ? "destructive"
-//           : row.original.type === "regrant"
-//             ? "success"
-//             : "secondary";
-//       return <Badge variant={color}>{row.original.type}</Badge>;
-//     },
-//   },
-//   {
-//     accessorKey: "message",
-//     header: "Message",
-//     cell: ({ row }) => (
-//       <span className="truncate max-w-[250px]">{row.original.message}</span>
-//     ),
-//   },
-//   {
-//     accessorKey: "status",
-//     header: "Status",
-//     cell: ({ row }) => {
-//       const s = row.original.status || "—";
-//       return (
-//         <Badge
-//           variant={
-//             s === "completed"
-//               ? "success"
-//               : s === "pending"
-//                 ? "secondary"
-//                 : "destructive"
-//           }
-//         >
-//           {s}
-//         </Badge>
-//       );
-//     },
-//   },
-//   {
-//     accessorKey: "category",
-//     header: "Category",
-//     cell: ({ row }) =>
-//       row.original.category ? (
-//         <Badge variant="outline">{row.original.category}</Badge>
-//       ) : (
-//         "—"
-//       ),
-//   },
-//   {
-//     id: "actions",
-//     cell: () => (
-//       <DropdownMenu>
-//         <DropdownMenuTrigger asChild>
-//           <Button
-//             variant="ghost"
-//             size="icon"
-//             className="text-muted-foreground flex size-8"
-//           >
-//             <IconDotsVertical size={16} />
-//           </Button>
-//         </DropdownMenuTrigger>
-//         <DropdownMenuContent align="end" className="w-32">
-//           <DropdownMenuItem>View Details</DropdownMenuItem>
-//           <DropdownMenuItem>Export</DropdownMenuItem>
-//         </DropdownMenuContent>
-//       </DropdownMenu>
-//     ),
-//   },
-// ];
-
-// // ---------- Table Component ----------
-// export function DataTable() {
-//   const { auditLogs, loadingLogs, loadLogs } = useConsentStore();
-//   const [data, setData] = React.useState<TableEntry[]>([]);
-//   const [sorting, setSorting] = React.useState<any>([]);
-
-//   React.useEffect(() => {
-//     loadLogs();
-//   }, [loadLogs]);
-
-//   React.useEffect(() => {
-//     if (auditLogs.length > 0) setData(auditLogs as TableEntry[]);
-//   }, [auditLogs]);
-
-//   const sensors = useSensors(useSensor(PointerSensor));
-
-//   const table = useReactTable({
-//     data,
-//     columns,
-//     state: { sorting },
-//     onSortingChange: setSorting,
-//     getCoreRowModel: getCoreRowModel(),
-//     getSortedRowModel: getSortedRowModel(),
-//     getPaginationRowModel: getPaginationRowModel(),
-//   });
-
-//   function handleDragEnd(event: any) {
-//     const { active, over } = event;
-//     if (active.id !== over?.id) {
-//       const oldIndex = data.findIndex((d) => d.id === active.id);
-//       const newIndex = data.findIndex((d) => d.id === over?.id);
-//       const newData = arrayMove(data, oldIndex, newIndex);
-//       setData(newData);
-//     }
-//   }
-
-//   if (loadingLogs)
-//     return (
-//       <div className="flex justify-center items-center h-40 text-muted-foreground">
-//         Loading logs...
-//       </div>
-//     );
-
-//   return (
-//     <div className="rounded-md border p-2">
-//       <DndContext
-//         sensors={sensors}
-//         collisionDetection={closestCenter}
-//         modifiers={[restrictToVerticalAxis]}
-//         onDragEnd={handleDragEnd}
-//       >
-//         <SortableContext
-//           items={data.map((d) => d.id)}
-//           strategy={verticalListSortingStrategy}
-//         >
-//           <table className="w-full border-collapse">
-//             <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-//               {table.getHeaderGroups().map((headerGroup) => (
-//                 <tr key={headerGroup.id}>
-//                   {headerGroup.headers.map((header) => (
-//                     <th
-//                       key={header.id}
-//                       className={cn(
-//                         "px-3 py-2 text-left font-medium select-none"
-//                       )}
-//                     >
-//                       {flexRender(
-//                         header.column.columnDef.header,
-//                         header.getContext()
-//                       )}
-//                     </th>
-//                   ))}
-//                 </tr>
-//               ))}
-//             </thead>
-//             <tbody>
-//               {table.getRowModel().rows.map((row) => (
-//                 <tr
-//                   key={row.id}
-//                   className="border-b hover:bg-muted/30 transition-colors"
-//                 >
-//                   {row.getVisibleCells().map((cell) => (
-//                     <td key={cell.id} className="px-3 py-2 text-sm">
-//                       {flexRender(
-//                         cell.column.columnDef.cell,
-//                         cell.getContext()
-//                       )}
-//                     </td>
-//                   ))}
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </SortableContext>
-//       </DndContext>
-
-//       <div className="flex justify-end gap-2 mt-2">
-//         <Button
-//           variant="outline"
-//           size="sm"
-//           onClick={() => table.previousPage()}
-//           disabled={!table.getCanPreviousPage()}
-//         >
-//           Previous
-//         </Button>
-//         <Button
-//           variant="outline"
-//           size="sm"
-//           onClick={() => table.nextPage()}
-//           disabled={!table.getCanNextPage()}
-//         >
-//           Next
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }

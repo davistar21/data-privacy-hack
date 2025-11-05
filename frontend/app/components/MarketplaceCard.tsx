@@ -12,6 +12,8 @@ import {
 } from "../components/ui/dialog";
 import { Badge } from "../components/ui/badge";
 import { Calendar } from "lucide-react";
+import { toast } from "sonner";
+import { formatText } from "../utils/formatText";
 
 type Props = {
   offer: ReuseOffer;
@@ -57,11 +59,8 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
 
         <div className="mt-3 flex flex-wrap gap-2">
           {offer.fields.map((f) => (
-            <Badge
-              key={f}
-              className="bg-slate-800/20 text-[color:var(--muted)]"
-            >
-              {f}
+            <Badge key={f} className="bg-accent/40 text-[color:var(--muted)]">
+              {formatText(f)}
             </Badge>
           ))}
         </div>
@@ -87,9 +86,9 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
                 In exchange you will receive:{" "}
                 <span className="font-medium">{offer.benefit}</span>
               </div>
-              <div className="text-xs text-[color:var(--muted)]">
+              {/* <div className="text-xs text-[color:var(--muted)]">
                 You can undo this action for a short time after confirming.
-              </div>
+              </div> */}
             </div>
 
             <DialogFooter className="mt-4">
@@ -112,7 +111,7 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
         <Button
           variant="destructive"
           onClick={() => {
-            /* decline - could be tracked */
+            toast.info("We are working on it!");
           }}
         >
           Decline

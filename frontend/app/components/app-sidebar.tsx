@@ -33,8 +33,8 @@ import {
 
 const data = {
   user: {
-    name: "Eloise Midgen",
-    email: "eloisemidgen@example.com",
+    name: "Eyitayo Obembe",
+    email: "olulaja123@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -151,8 +151,8 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
-      className="bg-white  shadow-lg rounded-3xl overflow-hidden"
-      collapsible="offcanvas"
+      className="bg-white ml-4 !p-0 !h-[90vh] my-auto shadow-lg rounded-3xl overflow-hidden"
+      collapsible="icon"
       {...props}
     >
       <SidebarHeader>

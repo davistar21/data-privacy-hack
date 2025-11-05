@@ -53,88 +53,13 @@ export const ConsentSection = ({
   }, [consents, query, filter, tab]);
   return (
     <div className="space-y-6">
-      {/* <ConsentList consents={filtered} /> */}
-      {/* <ConsentDashboard /> */}
-      {/* {mode === "full" && (
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search consents..."
-              className="w-64"
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <Select
-              value={filter}
-              onValueChange={(val) => setFilter(val)}
-              defaultValue="all"
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Filter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="revoked">Revoked</SelectItem>
-                <SelectItem value="recent7d">Recent (7d)</SelectItem>
-                <SelectItem value="recent24h">Recent (24h)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {filtered.length} results
-          </div>
-        </div>
-      )}
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="mb-3">
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="revoked">Revoked</TabsTrigger>
-          <TabsTrigger value="all">All</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <ConsentList consents={filtered} />
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Consent Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ConsentChart />
-          </CardContent>
-        </Card>
-
-        {mode === "full" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Activity Timeline</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ConsentTimeline />
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      
-      <motion.div
-        layout
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
-      >
-        {filtered.map((c) => (
-          <OrgCard key={c.id} consent={c} />
-        ))}
-      </motion.div> */}
-
       <motion.div layout className="space-y-6">
         {/* Toolbar */}
+
+        {/* Stats Overview */}
+        <ConsentStats consents={consents} />
+        {/* <ConsentFilters setFilter={setFilter} /> */}
         <div className="flex flex-col sm:flex-row justify-between gap-3">
-          <Input
-            placeholder="Search organization or purpose..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full sm:w-80"
-          />
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList>
               <TabsTrigger value="active">Active</TabsTrigger>
@@ -143,10 +68,6 @@ export const ConsentSection = ({
             </TabsList>
           </Tabs>
         </div>
-
-        {/* Stats Overview */}
-        <ConsentStats consents={consents} />
-        <ConsentFilters setFilter={setFilter} />
 
         {/* Table View */}
         <ConsentTable consents={filtered} />
@@ -276,11 +197,11 @@ export const ConsentTable = ({
       className="bg-[color:var(--card)] rounded-xl border border-border p-5"
     >
       <div className="flex justify-between mb-4">
-        <Input
+        <SearchBar
+          onSearch={setQuery}
           placeholder="Search by organization or purpose..."
-          className="w-64"
-          onChange={(e) => setQuery(e.target.value)}
         />
+
         <span className="text-sm text-muted-foreground">
           {filtered.length} records
         </span>
@@ -301,9 +222,9 @@ export const ConsentTable = ({
             {paginated.map((c) => (
               <TableRow key={c.id}>
                 <TableCell>{c.org?.name}</TableCell>
-                <TableCell>{c.purpose}</TableCell>
+                <TableCell>{formatText(c.purpose, "capitalize")}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">
-                  {c.fields.join(", ")}
+                  {c.fields.map((f) => formatText(f)).join(", ")}
                 </TableCell>
                 <TableCell>
                   <span
@@ -369,6 +290,8 @@ export const ConsentTable = ({
 import { Activity, Clock } from "lucide-react";
 import type { Consent, Organization } from "~/types";
 import { ConsentFilters } from "./ConsentFilters";
+import { formatText } from "../../utils/formatText";
+import { SearchBar } from "../SearchBar";
 
 export const ConsentTimelineTwo = () => {
   const { auditLogs } = useConsentStore();

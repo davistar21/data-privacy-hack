@@ -20,6 +20,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+} from "../components/ui/drawer";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 
@@ -37,14 +44,22 @@ const CATEGORY_ICON: Record<CookieCategory, React.ReactNode> = {
   third_party: <Globe2 className="w-4 h-4 text-[var(--color-chart-4)]" />,
 };
 
-export default function CookieSiteCard({ site }: { site: CookieSite }) {
-  const { toggleCategory } = useWebPrivacyStore();
+export default function CookieSiteCard({
+  currentSite,
+  open,
+  onOpenChange,
+}: {
+  currentSite: CookieSite;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const { toggleCategory, websites } = useWebPrivacyStore();
   const consentStore = useConsentStore();
   const [confirming, setConfirming] = useState<{
     open: boolean;
     category?: CookieCategory;
   } | null>(null);
-
+  const site = websites.find((w) => w.id === currentSite.id) || currentSite;
   const handleToggle = async (
     category: CookieCategory,
     next: "enabled" | "disabled" | "allow_once"
@@ -74,6 +89,7 @@ export default function CookieSiteCard({ site }: { site: CookieSite }) {
               .websites.find((w) => w.id === site.id);
             const prev = s?.categories[category] ?? "enabled";
             const revertTo = prev === "allow_once" ? "disabled" : prev;
+
             await toggleCategory(site.id, category, revertTo as any);
             toast.success("Undo complete");
           },
@@ -92,25 +108,18 @@ export default function CookieSiteCard({ site }: { site: CookieSite }) {
   };
 
   return (
-    <motion.div
-      layout
-      whileHover={{ scale: 1.015 }}
-      whileTap={{ scale: 0.995 }}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      className="p-6 rounded-xl bg-[var(--color-card)] border border-[var(--color-border)] shadow-md hover:shadow-lg transition-all"
-    >
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between md:items-center gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
-            <h2 className="text-base font-semibold text-[var(--color-card-foreground)]">
+    <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+      <DrawerContent className="bg-white text-background border-border p-2 rounded-s-4xl">
+        <DrawerHeader>
+          <DrawerTitle>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-[var(--color-primary)]" />
               {site.name}
-            </h2>
-          </div>
-          <p className="text-xs text-[var(--color-muted-foreground)] mt-1">
-            {site.domain}
-          </p>
+            </div>
+            <p className="text-xs text-[var(--color-muted-foreground)] mt-1">
+              {site.domain}
+            </p>
+          </DrawerTitle>
           <div className="mt-2 text-xs text-[var(--color-muted-foreground)] flex flex-wrap items-center gap-2">
             <span>Third parties: {site.thirdParties.length}</span> •{" "}
             <span>Reputation: {site.reputation}</span> •{" "}
@@ -118,109 +127,108 @@ export default function CookieSiteCard({ site }: { site: CookieSite }) {
               Risk: {site.riskScore}
             </Badge>
           </div>
-        </div>
-        <div className="text-xs font-medium text-[var(--color-muted-foreground)]">
-          Manage cookie categories
-        </div>
-      </div>
+        </DrawerHeader>
 
-      {/* Categories */}
-      <motion.div
-        layout
-        className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
-      >
-        {(
-          [
-            "essential",
-            "analytics",
-            "marketing",
-            "third_party",
-          ] as CookieCategory[]
-        ).map((cat) => {
-          const status = site.categories[cat];
-          const colorMap: Record<string, string> = {
-            enabled:
-              "bg-[var(--color-chart-2)]/20 text-[var(--color-chart-2)] border-[var(--color-chart-2)]/30",
-            disabled:
-              "bg-[var(--color-destructive)]/10 text-[var(--color-destructive)] border-[var(--color-destructive)]/30",
-            allow_once:
-              "bg-[var(--color-accent)]/20 text-[var(--color-accent)] border-[var(--color-accent)]/30",
-          };
+        <motion.div layout className="flex flex-col gap-4">
+          {(
+            [
+              "essential",
+              "analytics",
+              "marketing",
+              "third_party",
+            ] as CookieCategory[]
+          ).map((cat) => {
+            const status = site.categories[cat];
+            const colorMap: Record<string, string> = {
+              enabled:
+                "bg-[var(--color-chart-2)]/20 text-[var(--color-chart-2)] border-[var(--color-chart-2)]/30",
+              disabled:
+                "bg-[var(--color-destructive)]/10 text-[var(--color-destructive)] border-[var(--color-destructive)]/30",
+              allow_once:
+                "bg-[var(--color-accent)]/20 text-[var(--color-accent)] border-[var(--color-accent)]/30",
+            };
 
-          return (
-            <AnimatePresence key={cat}>
-              <motion.div
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
-                className={`p-4 rounded-lg border shadow-sm hover:shadow-md transition-all bg-[var(--color-background)] ${colorMap[status]}`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    {CATEGORY_ICON[cat]}
-                    <span className="text-sm font-medium">
-                      {CATEGORY_LABEL[cat]}
-                    </span>
+            return (
+              <AnimatePresence key={cat}>
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.25 }}
+                  className={`p-4 rounded-lg border shadow-sm hover:shadow-md transition-all bg-[var(--color-background)]  ${colorMap[status]}`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {CATEGORY_ICON[cat]}
+                      <span className="text-sm font-medium">
+                        {CATEGORY_LABEL[cat]}
+                      </span>
+                    </div>
+                    <Badge
+                      className={`text-xs px-2 py-1 capitalize bg-transparent border border-[color:inherit] ${colorMap[status]}`}
+                    >
+                      {status.replace("_", " ")}
+                    </Badge>
                   </div>
-                  <Badge
-                    className={`text-xs px-2 py-1 capitalize bg-transparent border border-[color:inherit]`}
-                  >
-                    {status.replace("_", " ")}
-                  </Badge>
-                </div>
 
-                <div className="flex items-center gap-2 mt-1">
-                  <Button
-                    size="sm"
-                    variant={status === "enabled" ? "default" : "outline"}
-                    onClick={() => handleToggle(cat, "enabled")}
-                  >
-                    Enable
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={status === "disabled" ? "destructive" : "outline"}
-                    onClick={() => handleToggle(cat, "disabled")}
-                  >
-                    Disable
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={status === "allow_once" ? "default" : "outline"}
-                    onClick={() => handleToggle(cat, "allow_once")}
-                  >
-                    Allow Once
-                  </Button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          );
-        })}
-      </motion.div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Button
+                      size="sm"
+                      variant={status === "enabled" ? "default" : "outline"}
+                      onClick={() => handleToggle(cat, "enabled")}
+                    >
+                      Enable
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={
+                        status === "disabled" ? "destructive" : "outline"
+                      }
+                      onClick={() => handleToggle(cat, "disabled")}
+                    >
+                      Disable
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={status === "allow_once" ? "default" : "outline"}
+                      onClick={() => handleToggle(cat, "allow_once")}
+                    >
+                      Allow Once
+                    </Button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            );
+          })}
+        </motion.div>
 
-      {/* Confirm Dialog */}
-      <Dialog
-        open={!!confirming?.open}
-        onOpenChange={() => setConfirming(null)}
-      >
-        <DialogContent className="bg-[var(--color-card)] text-[var(--color-card-foreground)] border-[var(--color-border)]">
-          <DialogHeader>
-            <DialogTitle>Confirm Cookie Revocation</DialogTitle>
-          </DialogHeader>
-          <div className="py-2 text-sm text-[var(--color-muted-foreground)]">
-            Disabling marketing or third-party cookies may limit certain
-            personalization and embedded content. Continue?
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirming(null)}>
-              Cancel
-            </Button>
-            <Button onClick={onConfirmDisable}>Yes, Revoke</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </motion.div>
+        <DrawerFooter className="justify-end">
+          <Button onClick={() => onOpenChange(false)}>Close</Button>
+        </DrawerFooter>
+
+        {/* Confirm Dialog */}
+        <Dialog
+          open={!!confirming?.open}
+          onOpenChange={() => setConfirming(null)}
+        >
+          <DialogContent className="bg-[var(--color-card)] text-[var(--color-card-foreground)] border-[var(--color-border)]">
+            <DialogHeader>
+              <DialogTitle>Confirm Cookie Revocation</DialogTitle>
+            </DialogHeader>
+            <div className="py-2 text-sm text-[var(--color-muted-foreground)]">
+              Disabling marketing or third-party cookies may limit certain
+              personalization and embedded content. Continue?
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setConfirming(null)}>
+                Cancel
+              </Button>
+              <Button onClick={onConfirmDisable}>Yes, Revoke</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 }

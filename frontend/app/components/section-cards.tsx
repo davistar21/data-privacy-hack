@@ -38,7 +38,7 @@ export function SectionCards() {
       />
       <StatCard
         title="Cashback Balance"
-        value="$1.24"
+        value="₦1.24"
         change="1.1%"
         changeType="up"
         description="Across 11 revoked consents"

@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { type ReuseOffer } from "../types";
-import { Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { formatText } from "../utils/formatText";
 
 export const MarketplacePreview: React.FC<{
@@ -26,9 +26,9 @@ export const MarketplacePreview: React.FC<{
         </div>
         <a
           href="/market"
-          className="text-xs text-[color:var(--muted)] hover:text-[color:var(--primary)] transition-colors"
+          className="flex gap-1 items-center text-sm text-[color:var(--muted)] hover:text-[color:var(--primary)] transition-colors"
         >
-          View all →
+          View all <ArrowUpRight size={16} />
         </a>
       </CardHeader>
 

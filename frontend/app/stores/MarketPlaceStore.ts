@@ -207,7 +207,7 @@ export const useMarketplaceStore = create<MarketplaceState>()(
             type: "reuse_revoked",
             userId: consentStore.userId,
             orgId: b.orgId,
-            message: `User revoked previously accepted reuse (undo).`,
+            message: `You revoked previously accepted reuse (undo).`,
             timestamp: now,
             status: "completed",
           } as any;
@@ -228,7 +228,7 @@ export const useMarketplaceStore = create<MarketplaceState>()(
               type: "reuse_revoked",
               userId: consentStore.userId,
               orgId: b.orgId,
-              message: `User revoked reuse acceptance (undo).`,
+              message: `You revoked reuse acceptance (undo).`,
               fields: [],
               timestamp: new Date().toISOString(),
               status: "completed",

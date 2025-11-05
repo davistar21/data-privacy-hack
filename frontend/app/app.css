@@ -1,11 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+
 @import "tailwindcss";
+
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans:
-    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Mona Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --card: "f0f0f0";
 }
@@ -20,6 +23,29 @@ body {
     color-scheme: dark;
   }
 }
+h1 {
+  @apply text-5xl lg:text-[84px] text-gradient leading-tight tracking-[-1px] font-semibold;
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    var(--sea-dark-300),
+    var(--sea-dark-700),
+    #8e97c5
+  );
+  background-clip: text;
+}
+h2 {
+  @apply text-xl lg:text-3xl font-[500];
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    var(--sea-dark-400),
+    var(--sea-dark-900),
+    #8e97c5
+  );
+  background-clip: text;
+}
+
 button,
 a {
   cursor: pointer;
@@ -38,7 +64,7 @@ a {
   --color-popover: var(--sea-dark-100);
   --color-popover-foreground: var(--sea-dark-800);
   --color-primary: var(--sea-dark-500);
-  --color-primary-foreground: white;
+  --color-primary-foreground: var(--sea-dark-50);
   --color-secondary: var(--sea-dark-300);
   --color-secondary-foreground: var(--sea-dark-800);
   --color-muted: var(--sea-dark-200);
@@ -134,7 +160,7 @@ a {
 
   /* Sidebar overrides */
   --sidebar: var(--sea-dark-900);
-  --sidebar-foreground: white;
+  --sidebar-foreground: var(--sea-dark-50);
   --sidebar-primary: var(--sea-dark-400);
   --sidebar-primary-foreground: var(--sea-dark-900);
   --sidebar-accent: var(--sea-dark-700);
@@ -154,4 +180,229 @@ a {
 }
 @utility scrollbar {
   scrollbar-width: none;
+}
+/* For the Chatbot component, style your markdown */
+/* Ensure proper text hierarchy for headings */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.prose h1 {
+  font-size: 2.05rem; /* Large size for primary header */
+}
+
+.prose h2 {
+  font-size: 1.65rem; /* Slightly smaller than h1 */
+}
+
+.prose h3 {
+  font-size: 1.35rem;
+}
+
+.prose h4 {
+  font-size: 1.15rem;
+}
+
+/* Style for unordered and ordered lists */
+.prose ul,
+.prose ol {
+  margin-left: 20px;
+  margin-bottom: 1rem; /* space between lists */
+}
+
+.prose ul li,
+.prose ol li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6; /* better readability */
+}
+
+/* Styling for strong text (bold) */
+.prose strong {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Blockquotes */
+.prose blockquote {
+  padding-left: 20px;
+  border-left: 4px solid var(--color-muted);
+  font-style: italic;
+  color: var(--color-muted);
+  margin: 0 0 1rem 0;
+}
+
+/* Links */
+.prose a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.prose a:hover {
+  color: var(--color-accent); /* Hover state */
+}
+
+/* Code blocks */
+.prose code {
+  background-color: var(--color-muted-light);
+  color: var(--color-primary);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+}
+
+.prose pre {
+  background-color: var(--color-muted-light);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: "Courier New", monospace;
+  color: var(--color-dark);
+  margin-bottom: 1rem;
+  white-space: pre-wrap;
+}
+
+/* Lists: Custom bullets */
+.prose ul li::before {
+  content: "•";
+  color: var(--color-primary); /* Bullet color */
+  font-weight: bold;
+  margin-right: 0.5rem;
+  margin-left: -1.25rem; /* Move bullet left */
+}
+
+/* Horizontal rule */
+.prose hr {
+  border-top: 1px solid var(--color-muted);
+  margin: 1.5rem 0;
+}
+
+/* Paragraphs */
+.prose p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+/* Styling for inline code */
+.prose code {
+  background-color: #f7f7f7;
+  color: #333;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Table styling */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose table th,
+.prose table td {
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid var(--color-muted-light);
+}
+
+.prose table th {
+  background-color: var(--color-muted-light);
+  font-weight: bold;
+}
+
+.prose table tr:nth-child(even) {
+  background-color: var(--color-muted-light-50);
+}
+
+/* Add a custom font size for links inside blocks */
+.prose blockquote a {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Image styles for responsiveness */
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Customizing the list style in different contexts */
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+/* Handle breaks for better readability */
+.prose br {
+  margin-bottom: 0.5rem;
+}
+
+.custom-loader div hr {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #097079;
+  animation: customBounce 1s infinite ease;
+}
+.custom-loader div hr:nth-child(1) {
+  animation-delay: 0s;
+}
+.custom-loader div hr:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.custom-loader div hr:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes customBounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.2);
+    opacity: 0.7;
+  }
+}
+@utility bg-gradient-dark {
+  background: linear-gradient(
+    135deg,
+    var(--sea-dark-200),
+    var(--sea-dark-400),
+    var(--sea-dark-300)
+  );
+}
+@utility text-gradient-dark {
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    var(--sea-dark-800),
+    var(--sea-dark-600),
+    var(--sea-dark-800)
+  );
+  background-clip: text;
+}
+@utility text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
+}
+@layer components {
+  .hero {
+    @apply flex flex-col gap-4 items-center justify-center text-center;
+  }
+  .cta-button {
+    @apply rounded-md px-6 py-4 md:px-8 md:py-6 text-lg md:text-2xl font-semibold w-fit flex items-center gap-2 md:gap-3 border-1 border-transparent;
+  }
 }

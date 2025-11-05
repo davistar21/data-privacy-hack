@@ -51,13 +51,15 @@ export function NavMain({
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
-                  size="lg"
-                  className={`${onPage ? `bg-sidebar-accent text-muted-foreground` : ""} transition-colors`}
+                  className={`${onPage ? `bg-sidebar-accent  text-muted-foreground` : ""} transition-colors`}
                   tooltip={item.title}
                   onClick={() => navigate(item.url)}
                 >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
+                  {onPage && (
+                    <div className="ml-auto h-2 w-2 rounded-full bg-teal-600 animate-pulse"></div>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );

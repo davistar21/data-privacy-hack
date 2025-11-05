@@ -1,7 +1,12 @@
 import type { Organization } from "~/types";
 
 export const orgs: Organization[] = [
-  { id: "zenith", name: "Zenith Bank", description: "Retail & corporate bank" },
+  {
+    id: "zenith",
+    name: "Zenith Bank",
+    description: "Retail & corporate bank",
+    logoUrl: "/zenith-logo.png",
+  },
   { id: "gtbank", name: "GTBank", description: "Commercial banking services" },
   {
     id: "firstbank",

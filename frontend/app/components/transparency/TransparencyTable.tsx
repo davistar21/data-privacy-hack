@@ -12,6 +12,14 @@ import { Badge } from "../ui/badge";
 import formatDate from "../../utils/formatDate";
 import type { AuditLogEntry } from "~/types";
 import { useConsentStore } from "../../stores/ConsentStore";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRightIcon,
+  MoreHorizontal,
+} from "lucide-react";
+import { formatText } from "../../utils/formatText";
 
 type Props = {
   logs: AuditLogEntry[];
@@ -48,14 +56,14 @@ export const TransparencyTable: React.FC<Props> = ({
     <div>
       <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-muted sticky top-0 z-1">
             <TableRow>
               <TableHead>When</TableHead>
-              <TableHead>Org</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-center">Org</TableHead>
+              <TableHead className="text-center">Type</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              {/* <TableHead>Category</TableHead> */}
+              <TableHead className="">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,31 +87,37 @@ export const TransparencyTable: React.FC<Props> = ({
                     <div className="text-sm font-medium">
                       {formatDate(l.timestamp)}
                     </div>
-                    <div className="text-xs text-[color:var(--muted)]">
+                    {/* <div className="text-xs text-[color:var(--muted)]">
                       {l.userId}
+                    </div> */}
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-medium text-center">
+                      {formatText(l.orgId, "uppercase")}
+                    </div>
+                    {/* <div className="text-xs text-[color:var(--muted)]">
+                      {
+                    ["placeholder-1", "placeholder-2"]
+                          .slice(0, 3)
+                          .join(", ")
+                      }
+                    </div> */}
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-xs text-center">
+                      {formatText(l.type)}
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{l.orgId}</div>
-                    <div className="text-xs text-[color:var(--muted)]">
-                      {/*l.fields ||*/ ["placeholder-1", "placeholder-2"]
-                        .slice(0, 3)
-                        .join(", ")}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">{l.type}</div>
-                  </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     <Badge
-                      className={`px-2 ${l.status === "completed" ? "bg-green-800/20 text-green-200" : l.status === "failed" ? "bg-red-800/20 text-red-300" : "bg-yellow-800/20 text-yellow-300"}`}
+                      className={`px-2 ${l.status === "completed" ? "bg-teal-600/20 text-teal-600" : l.status === "failed" ? "bg-red-600/20 text-red-600" : "bg-yellow-600/20 text-yellow-700/80"}`}
                     >
                       {l.status ?? "unknown"}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <div className="text-xs">{l.category ?? "—"}</div>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button
@@ -114,7 +128,7 @@ export const TransparencyTable: React.FC<Props> = ({
                           onOpen(l);
                         }}
                       >
-                        Details
+                        <MoreHorizontal />
                       </Button>
                     </div>
                   </TableCell>
@@ -127,7 +141,7 @@ export const TransparencyTable: React.FC<Props> = ({
 
       {/* Pagination controls */}
       <div className="mt-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm text-[color:var(--muted)]">
+        <div className="hidden md:flex items-center gap-2 text-sm text-[color:var(--muted)]">
           Showing {pageIndex * pageSize + 1} -{" "}
           {Math.min((pageIndex + 1) * pageSize, sorted.length)} of{" "}
           {sorted.length}
@@ -140,7 +154,7 @@ export const TransparencyTable: React.FC<Props> = ({
             onClick={() => setPageIndex(0)}
             disabled={pageIndex === 0}
           >
-            First
+            <ChevronsLeft />
           </Button>
           <Button
             variant="outline"
@@ -148,11 +162,11 @@ export const TransparencyTable: React.FC<Props> = ({
             onClick={() => setPageIndex(Math.max(0, pageIndex - 1))}
             disabled={pageIndex === 0}
           >
-            Prev
+            <ChevronLeft />
           </Button>
 
-          <div className="text-sm px-2">
-            Page {pageIndex + 1} / {pageCount}
+          <div className="hidden md:block text-sm px-2">
+            {pageIndex + 1} of {pageCount}
           </div>
 
           <Button
@@ -161,7 +175,7 @@ export const TransparencyTable: React.FC<Props> = ({
             onClick={() => setPageIndex(Math.min(pageCount - 1, pageIndex + 1))}
             disabled={pageIndex >= pageCount - 1}
           >
-            Next
+            <ChevronRight />
           </Button>
           <Button
             variant="outline"
@@ -169,7 +183,7 @@ export const TransparencyTable: React.FC<Props> = ({
             onClick={() => setPageIndex(pageCount - 1)}
             disabled={pageIndex >= pageCount - 1}
           >
-            Last
+            <ChevronsRightIcon />
           </Button>
 
           <select
@@ -192,7 +206,7 @@ export const TransparencyTable: React.FC<Props> = ({
             variant="ghost"
             size="sm"
             onClick={toggleSort}
-            className="ml-2"
+            className="ml-2 hidden md:block"
           >
             Sort: {sortDir === "desc" ? "Newest" : "Oldest"}
           </Button>

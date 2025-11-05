@@ -25,10 +25,10 @@ export default function CitizenDashboard() {
 
     <SidebarInset className="!bg-white">
       <div className="text-4xl md:text-5xl font-semibold mb-8">
-        Welcome, <span className="text-primary">Eloise</span>
+        Welcome, <span className="text-primary">Eyitayo</span>
       </div>
       <PrivacyHealthBar
-        score={70}
+        score={80}
         recommendations={[
           "Enable 2FA for your account",
           "Revoke unused third-party app permissions",

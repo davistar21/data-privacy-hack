@@ -11,6 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { useConsentStore } from "../../stores/ConsentStore";
 import formatDate from "../../utils/formatDate";
+import { formatText } from "../../utils/formatText";
 
 type Props = {
   query: string;
@@ -37,7 +38,7 @@ export const TransparencyFilters: React.FC<Props> = ({
     const unique = Array.from(new Set((consents ?? []).map((c) => c.orgId)));
     return [
       { id: "all", name: "All Orgs" },
-      ...unique.map((id) => ({ id, name: id })),
+      ...unique.map((id) => ({ id, name: formatText(id, "capitalize") })),
     ];
   }, [consents]);
 

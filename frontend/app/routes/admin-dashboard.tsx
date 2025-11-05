@@ -14,11 +14,17 @@ export default function OverviewPage() {
   const incidents = logs.filter((l) => l.type === "incident");
 
   return (
-    <div className="space-y-6">
-      <AdminDashboard />
-      <h1 className="text-2xl font-semibold text-gray-800">
-        Organization Overview
-      </h1>
+    <div className="space-y-6 xs:p-2 sm:p-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          {formatText(orgs.find((o) => o.id == orgId)?.name!, "capitalize")}
+        </h1>
+        <img
+          src={orgs.find((o) => o.id)?.logoUrl ?? ""}
+          alt=""
+          className="w-12 md:w-16"
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Events" value={totalEvents} />
         <StatCard title="Consents Granted" value={granted} />
@@ -42,8 +48,7 @@ export default function OverviewPage() {
           ))}
         </ul>
       </div>
-      <AuditPage />
-      <DashboardPage />
+
       <OffersManagementPage />
       <DataRegistryPage />
       <AuditLogsPage />
@@ -51,19 +56,6 @@ export default function OverviewPage() {
   );
 }
 
-export function AuditPage() {
-  const { orgId } = useParams();
-  const { orgLogs } = useConsentStore();
-
-  const logs = orgLogs[orgId!] || [];
-
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-gray-800">Audit Logs</h1>
-      <AuditLogList logs={logs} />
-    </div>
-  );
-}
 import { ScrollArea } from "../components/ui/scroll-area";
 import type { OrgAuditEvent } from "~/types";
 
@@ -193,6 +185,7 @@ import { Button } from "../components/ui/button";
 import { formatText } from "../utils/formatText";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import OffersManagementPage from "../components/admin/OffersManagementPage";
+import { orgs } from "../../constants/org";
 
 export function OffersManagementPage2() {
   const { offers, loadOffers, clearOffers } = useMarketplaceStore();
@@ -237,7 +230,7 @@ export function OffersManagementPage2() {
 
 export function DataRegistryPage() {
   const { consents, loadConsents, userId } = useConsentStore();
-
+  const { orgId } = useParams();
   useEffect(() => {
     loadConsents(userId);
   }, []);
@@ -246,7 +239,7 @@ export function DataRegistryPage() {
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Data Registry</h1>
       <p className="text-gray-500 mb-4">
-        Review all user consents across organizations.
+        Review all user consents across {formatText(orgId!, "capitalize")}
       </p>
 
       <div className="overflow-x-auto border rounded-lg">
@@ -261,27 +254,31 @@ export function DataRegistryPage() {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-gray-200">
-            {consents.map((c) => (
-              <tr key={c.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{c.org?.name || c.orgId}</td>
-                <td className="px-4 py-2">{c.purpose}</td>
-                <td className="px-4 py-2">
-                  {c.fields
-                    .map((field) => formatText(field, "capitalize"))
-                    .join(", ")}
-                </td>
-                <td className="px-4 py-2">
-                  {c.consentGiven ? (
-                    <span className="text-green-600 font-medium">Granted</span>
-                  ) : (
-                    <span className="text-red-500 font-medium">Revoked</span>
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {new Date(c.givenAt).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
+            {consents
+              .filter((c) => c.orgId === orgId)
+              .map((c) => (
+                <tr key={c.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{c.org?.name || c.orgId}</td>
+                  <td className="px-4 py-2">{formatText(c.purpose)}</td>
+                  <td className="px-4 py-2">
+                    {c.fields
+                      .map((field) => formatText(field, "capitalize"))
+                      .join(", ")}
+                  </td>
+                  <td className="px-4 py-2">
+                    {c.consentGiven ? (
+                      <span className="text-green-600 font-medium">
+                        Granted
+                      </span>
+                    ) : (
+                      <span className="text-red-500 font-medium">Revoked</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {new Date(c.givenAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -293,7 +290,7 @@ export function DataRegistryPage() {
 
 export function AuditLogsPage() {
   const { auditLogs, loadLogs } = useConsentStore();
-
+  const { orgId } = useParams();
   useEffect(() => {
     loadLogs();
   }, []);
@@ -302,7 +299,7 @@ export function AuditLogsPage() {
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Audit Logs</h1>
       <p className="text-gray-500">
-        View all audit events across user and organization actions.
+        View all audit events across {formatText(orgId!, "capitalize")}
       </p>
 
       <div className="overflow-x-auto border rounded-lg">
@@ -317,29 +314,33 @@ export function AuditLogsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {auditLogs.map((log) => (
-              <tr key={log.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2">
-                  {new Date(log.timestamp).toLocaleString()}
-                </td>
-                <td className="px-4 py-2">{log.orgId}</td>
-                <td className="px-4 py-2">{log.type}</td>
-                <td className="px-4 py-2">{log.message}</td>
-                <td className="px-4 py-2">
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      log.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : log.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {log.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {auditLogs
+              .filter((a) => a.orgId == orgId)
+              .map((log) => (
+                <tr key={log.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2">
+                    {formatText(log.orgId, "capitalize")}
+                  </td>
+                  <td className="px-4 py-2">{log.type}</td>
+                  <td className="px-4 py-2">{log.message}</td>
+                  <td className="px-4 py-2">
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        log.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : log.status === "completed"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {log.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

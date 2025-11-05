@@ -1,4 +1,6 @@
-import { Bell } from "lucide-react";
+import { Bell, ShoppingBag, Brain, Moon } from "lucide-react";
+import { motion } from "framer-motion";
+import { SearchBar } from "../../components/SearchBar";
 import { Button } from "../../components/ui/button";
 import {
   Avatar,
@@ -11,74 +13,84 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
 import { SidebarTrigger } from "../ui/sidebar";
 import { HeaderNotification } from "../HeaderNotification";
+import { useEffect, useState } from "react";
 
-export function Header() {
+export function Header({ isAdmin = false }: { isAdmin?: boolean }) {
+  const [isSticky, setIsSticky] = useState(false);
+
+  // Track scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 10); // Toggle sticky class when scrolled past 100px
+    };
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up the event listener
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
-    <header
-      className="
-        h-16 flex items-center justify-between px-6
-        bg-[var(--color-card)] text-[var(--color-card-foreground)]
-        border-b border-[var(--color-border)]
-        sticky left-0 right-0 top-0 z-30 transition-colors duration-300
-        backdrop-blur supports-[backdrop-filter]:bg-[color-mix(in_srgb,var(--color-card)_90%,transparent)]
-      "
-    >
-      {/* Left section — Sidebar toggle + search */}
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="text-[var(--color-foreground)]" />
-        <Input
-          placeholder="Search consents, organizations, etc."
-          className="
-            bg-[var(--color-input)]
-            placeholder:text-[var(--color-muted-foreground)]
-            border border-[var(--color-border)]
-            focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]
-            transition-colors w-64
-          "
+    <div className="relative">
+      <motion.header
+        initial={{ opacity: 0, y: -40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className={`${isSticky ? "fixed md:top-3 max-md:left-1/2 max-md:-translate-x-1/2 " : "absolute top-3 left-1/2 -translate-x-1/2"} w-[95%] max-w-6xl h-14 flex items-center justify-between gap-4 rounded-xl border border-[var(--color-foreground)]/40 bg-[var(--color-card)]/80 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.05)] px-4 md:px-6 z-11`}
+      >
+        {!isAdmin && (
+          <SidebarTrigger className="text-s=econdary-foreground" size="lg" />
+        )}
+
+        <img
+          src="/Nova-logo.png"
+          alt="Nova"
+          className="h-6 md:h-7 w-auto object-contain"
         />
-      </div>
-      <img src="/Nova-horizontal.png" alt="" className="h-8 object-contain" />
-      {/* Right section — notifications + profile */}
-      <div className="flex items-center gap-4">
-        {/* Notifications */}
-        {/* <Button
-          variant="ghost"
-          size="icon"
-          className="relative text-[var(--color-foreground)] hover:bg-[var(--color-muted)]"
-        >
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--color-destructive)] rounded-full" />
-        </Button> */}
-        <HeaderNotification />
-        {/* User avatar dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Avatar className="cursor-pointer border border-[var(--color-border)] hover:ring-2 hover:ring-[var(--color-ring)] transition-all">
-              <AvatarImage src="/avatar.png" alt="User" />
-              <AvatarFallback>EY</AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="bg-[var(--color-card)] text-[var(--color-card-foreground)] border border-[var(--color-border)] shadow-lg"
-          >
-            <DropdownMenuItem asChild>
-              <a href="/profile">Profile</a>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <a href="/settings">Settings</a>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <a href="/logout" className="text-[var(--color-destructive)]">
-                Logout
-              </a>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </header>
+
+        {/* --- Center Section: Search bar (hidden on small screens) --- */}
+        <div className="flex flex-1 justify-center">
+          <div className="w-full max-w-md">
+            <SearchBar placeholder="Search consents, organizations, etc." />
+          </div>
+        </div>
+
+        {/* --- Right Section: Actions --- */}
+        {!isAdmin && (
+          <div className="flex items-center gap-2 sm:gap-3">
+            <HeaderNotification />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer border border-[var(--color-border)] hover:ring-2 hover:ring-[var(--color-ring)] transition-all">
+                  <AvatarImage src="/avatar.png" alt="User" />
+                  <AvatarFallback>EY</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[var(--color-card)] text-[var(--color-card-foreground)] border border-[var(--color-border)] shadow-xl rounded-lg"
+              >
+                <DropdownMenuItem asChild>
+                  <a href="/profile">Profile</a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/settings">Settings</a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/logout" className="text-[var(--color-destructive)]">
+                    Logout
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
+      </motion.header>
+    </div>
   );
 }

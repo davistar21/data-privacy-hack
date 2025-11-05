@@ -22,6 +22,7 @@ import {
 } from "../../components/ui/select";
 import { orgs } from "../../../constants/org";
 import { useParams } from "react-router";
+import { Separator } from "../ui/separator";
 
 export default function OffersManagementPage() {
   const {
@@ -127,7 +128,7 @@ export default function OffersManagementPage() {
   const handleEdit = (o: ReuseOffer) => {
     setEditing(o);
     // form will populate via effect
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 600, behavior: "smooth" });
   };
 
   const handleDelete = async (id: string) => {
@@ -144,12 +145,14 @@ export default function OffersManagementPage() {
 
   const sortedOffers = useMemo(
     () =>
-      [...offers].sort((a, b) => {
-        // upcoming expiry first, then newest
-        const aDate = new Date(a.expiresAt!).getTime();
-        const bDate = new Date(b.expiresAt!).getTime();
-        return aDate - bDate;
-      }),
+      [...offers]
+        .filter((offer) => offer.orgId === orgId)
+        .sort((a, b) => {
+          // upcoming expiry first, then newest
+          const aDate = new Date(a.expiresAt!).getTime();
+          const bDate = new Date(b.expiresAt!).getTime();
+          return aDate - bDate;
+        }),
     [offers]
   );
 
@@ -165,41 +168,23 @@ export default function OffersManagementPage() {
       </div>
 
       {/* Add / Edit Form */}
-      <Card>
+      <Card className="border-teal-600 border-1">
         <CardHeader>
           <CardTitle>{editing ? "Edit Offer" : "Create Offer"}</CardTitle>
+          <Separator className="bg-foreground/50 !h-0.5 rounded-full" />
         </CardHeader>
         <CardContent>
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            {/* <div className="space-y-2">
-              <Label>Organization ID</Label>
-              <Input
-                placeholder="e.g. ecomshop"
-                value={formState.orgId}
-                onChange={(e) => onChange({ orgId: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Organization Name (display)</Label>
-              <Input
-                placeholder="EcomShop"
-                value={formState.orgName}
-                onChange={(e) => onChange({ orgName: e.target.value })}
-              />
-            </div> */}
-
             <div className="space-y-2 md:col-span-2">
               <Label>Benefit</Label>
               <Select
                 value={formState.benefit}
                 onValueChange={(v) => onChange({ benefit: v })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-teal-600 border-2">
                   <SelectValue placeholder="Select a benefit" />
                 </SelectTrigger>
                 <SelectContent>
@@ -215,7 +200,8 @@ export default function OffersManagementPage() {
             <div className="space-y-2 md:col-span-2">
               <Label>Summary</Label>
               <textarea
-                placeholder="Short explanation for users"
+                className="border-teal-600 border-2 w-full min-h-[110px] p-2 rounded-xl"
+                placeholder="Describe this offer..."
                 value={formState.summary}
                 onChange={(e) => onChange({ summary: e.target.value })}
                 rows={2}
@@ -228,7 +214,7 @@ export default function OffersManagementPage() {
                 value={formState.fieldsText}
                 onValueChange={(v) => onChange({ fieldsText: v })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-teal-600 border-2">
                   <SelectValue placeholder="Select a data field" />
                 </SelectTrigger>
                 <SelectContent>
@@ -248,6 +234,7 @@ export default function OffersManagementPage() {
             <div className="space-y-2">
               <Label>Expires At</Label>
               <Input
+                className="border-teal-600 border-2"
                 type="date"
                 value={formState.expiresAt}
                 onChange={(e) => onChange({ expiresAt: e.target.value })}
@@ -281,23 +268,24 @@ export default function OffersManagementPage() {
         </CardContent>
       </Card>
 
-      {/* Offers list */}
+      <h3 className="font-semibold text-xl text-accent-foreground">
+        Published Offers
+      </h3>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {loadingOffers ? (
           <div>Loading offers…</div>
         ) : sortedOffers.length === 0 ? (
-          <div className="text-sm text-muted">No offers</div>
+          <div className="text-sm text-gray-500">No offers</div>
         ) : (
           sortedOffers.map((offer) => (
-            <Card key={offer.id} className="shadow hover:shadow-lg transition">
+            <Card key={offer.id} className="shadow hover:shadow-lg transition ">
               <CardContent className="p-4 space-y-2">
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="text-lg font-semibold">{offer.orgName}</h2>
-                    <div className="text-sm text-muted">{offer.orgId}</div>
                   </div>
                   <div className="text-right text-sm">
-                    <div className="text-xs text-muted">Expires</div>
+                    <div className="text-xs text-gray-500">Expires</div>
                     <div className="font-medium">
                       {offer.expiresAt
                         ? dayjs(new Date(offer.expiresAt)).format("DD/MM/YYYY")
@@ -306,13 +294,13 @@ export default function OffersManagementPage() {
                   </div>
                 </div>
 
-                <p className="text-sm text-muted">{offer.summary}</p>
+                <p className="text-sm text-gray-500">{offer.summary}</p>
 
                 <div className="text-sm">
                   <strong>Benefit:</strong> {offer.benefit}
                 </div>
 
-                <div className="text-xs text-muted">
+                <div className="text-xs text-gray-500">
                   <strong>Fields:</strong> {offer.fields?.join(", ") || "—"}
                 </div>
 

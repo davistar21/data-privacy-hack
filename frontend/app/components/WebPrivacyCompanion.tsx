@@ -1,7 +1,11 @@
 // src/components/WebPrivacyCompanion.tsx
 import React, { useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
-import { useWebPrivacyStore } from "../stores/WebPrivacyStore";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  useWebPrivacyStore,
+  type CookieCategory,
+  type CookieSite,
+} from "../stores/WebPrivacyStore";
 import CookieSiteCard from "./CookieSiteCard";
 import GlobalPreferenceCard from "./GlobalPreferenceCard";
 import { Button } from "../components/ui/button";
@@ -27,7 +31,7 @@ export default function WebPrivacyCompanion({
     () => websites.filter((w) => (w.riskScore ?? computeRiskScore(w)) >= 70),
     [websites, computeRiskScore]
   );
-  console.log("cookieLogs", cookieLogs);
+
   // preview mode shows a small compact card list (2)
   if (mode === "preview") {
     const preview = websites.slice(0, 2);
@@ -78,67 +82,8 @@ export default function WebPrivacyCompanion({
     <motion.section
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 rounded-2xl bg-[color:var(--card)] shadow"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-semibold mb-2 text-[color:var(--text)]">
-            Web Privacy Companion
-          </h2>
-          <p className="text-sm text-[color:var(--muted)] max-w-xl">
-            Manage cookie categories per site, view risk warnings and generate
-            audit records when you change cookie preferences.
-          </p>
-        </div>
-
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2">
-            <Badge className="bg-yellow-800/20 text-yellow-200">
-              Privacy Alerts
-            </Badge>
-            <Badge className="bg-slate-700/10 text-[color:var(--muted)]">
-              {websites.length} sites
-            </Badge>
-          </div>
-          <div className="text-xs text-[color:var(--muted)]">
-            Recent cookie events appear in your Transparency Log
-          </div>
-        </div>
-      </div>
-
-      {urgentSites.length > 0 && (
-        <div className="mt-4 p-3 rounded-lg bg-red-900/10 border-l-4 border-red-600">
-          <div className="font-semibold">High-risk website detected</div>
-          <div className="text-sm text-[color:var(--muted)]">
-            We recommend reviewing cookie settings for these sites:
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {urgentSites.map((s) => (
-              <Button
-                key={s.id}
-                variant="ghost"
-                onClick={() => {
-                  window.location.hash = `#${s.id}`;
-                }}
-              >
-                {s.name} ({s.riskScore})
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <GlobalPreferenceCard />
-        <RecentCookieEvents cookieLogs={cookieLogs} />
-      </div>
-
-      <CookieSiteList websites={websites} />
-
-      <p className="text-sm text-[color:var(--muted)] mt-6">
-        The Companion can issue session-only permissions ("Allow once").
-        Essential cookies must remain enabled for basic site functionality.
-      </p>
+      <Dashboard />
     </motion.section>
   );
 }
@@ -163,20 +108,260 @@ const itemVariants = {
   },
 };
 
-export function CookieSiteList({ websites }: { websites: any[] }) {
+export const Dashboard: React.FC = () => {
+  const { loadSites, websites, cookieLogs } = useWebPrivacyStore();
+
+  useEffect(() => {
+    loadSites();
+  }, [loadSites]);
+
   return (
-    <motion.div
-      className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-4"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      layout
-    >
-      {websites.map((site) => (
-        <motion.div key={site.id} variants={itemVariants} layout>
-          <CookieSiteCard site={site} />
-        </motion.div>
-      ))}
-    </motion.div>
+    <div className="space-y-6 px-6">
+      <h1 className="text-3xl font-bold text-gray-800">
+        Web Privacy Dashboard
+      </h1>
+
+      <p className="mt-2 text-lg text-gray-600">
+        Manage cookie categories per site, view risk warnings, and generate
+        audit records when you change cookie preferences.
+      </p>
+
+      <div className="mt-4">
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-yellow-500/20 text-yellow-600 border-amber-600">
+              Privacy Alerts
+            </Badge>
+            <Badge className="bg-slate-700/10 text-[color:var(--muted)] border-border">
+              {websites.length} sites
+            </Badge>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center gap-2 text-sm text-[color:var(--muted)] bg-gray-100 rounded-2xl px-2 py-3">
+        <Info className="text-gray-500" />
+        <p className="xs:truncate">
+          The Companion can issue session-only permissions ("Allow once").
+          Essential cookies must remain enabled for basic site functionality.
+        </p>
+      </div>
+      <GlobalPreferenceCard />
+
+      <HighRiskSummary />
+      <RecentCookieEvents cookieLogs={cookieLogs} />
+
+      <CookieTable />
+    </div>
   );
-}
+};
+
+// src/components/HighRiskSummary.tsx
+
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Progress } from "./ui/progress";
+
+const MAX_DISPLAY = 5;
+
+export const HighRiskSummary: React.FC = () => {
+  const { websites } = useWebPrivacyStore();
+  const [showAll, setShowAll] = useState(false);
+
+  const highRiskSites = websites.filter((s) => (s.riskScore ?? 0) >= 80);
+  const avgRisk =
+    websites.length > 0
+      ? Math.round(
+          websites.reduce((acc, s) => acc + (s.riskScore ?? 0), 0) /
+            websites.length
+        )
+      : 0;
+
+  const sitesToDisplay = showAll
+    ? highRiskSites
+    : highRiskSites.slice(0, MAX_DISPLAY);
+  const remaining = highRiskSites.length - MAX_DISPLAY;
+
+  return (
+    <Card className="border border-border shadow-sm">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold">
+          Privacy Risk Overview
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Average Risk */}
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">Average Risk</span>
+          <span className="text-sm font-medium">{avgRisk}%</span>
+        </div>
+        <Progress value={avgRisk} className="h-2.5 rounded-full" />
+
+        {/* High Risk Sites */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-muted-foreground">
+              High-Risk Websites
+            </span>
+            <Badge className="font-medium bg-gray-100 text-red-400">
+              {highRiskSites.length} / {websites.length}
+            </Badge>
+          </div>
+
+          {highRiskSites.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {sitesToDisplay.map((s) => (
+                <span
+                  key={s.id}
+                  className="flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-medium cursor-pointer hover:bg-red-200 transition"
+                  onClick={() => {
+                    // optional: jump to site details
+                    window.location.hash = `#${s.id}`;
+                  }}
+                >
+                  {s.name}
+                  <Badge className="bg-red-200 text-red-700 text-[10px] px-1 py-0.5 rounded">
+                    {s.riskScore}%
+                  </Badge>
+                </span>
+              ))}
+
+              {remaining > 0 && !showAll && (
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="text-red-500 text-xs underline hover:text-red-600"
+                >
+                  +{remaining} more
+                </button>
+              )}
+
+              {showAll && (
+                <button
+                  onClick={() => setShowAll(false)}
+                  className="text-red-500 text-xs underline hover:text-red-600"
+                >
+                  Show less
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground mt-2">
+              No high-risk websites detected
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+import { ChevronLeft, ChevronRight, Info, MoreHorizontal } from "lucide-react";
+const PAGE_SIZE = 10; // adjust rows per page
+
+export const CookieTable: React.FC = () => {
+  const { websites } = useWebPrivacyStore();
+  const [selected, setSelected] = useState<CookieSite | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(websites.length / PAGE_SIZE);
+  const paginatedSites = websites.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const goPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
+  const goNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+
+  return (
+    <>
+      <div className="bg-[color:var(--card)] rounded-xl border border-border p-5">
+        <h2 className="text-lg font-semibold mb-4">
+          Websites & Cookie Policies
+        </h2>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Website</TableHead>
+                <TableHead className="text-center">Domain</TableHead>
+                <TableHead className="text-center">Risk</TableHead>
+                <TableHead className="w-8"> </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedSites.map((site) => (
+                <TableRow
+                  key={site.id}
+                  onClick={() => setSelected(site)}
+                  className="cursor-pointer hover:bg-muted/5 transition"
+                >
+                  <TableCell>{site.name}</TableCell>
+                  <TableCell className="text-muted-foreground text-center">
+                    {site.domain}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      className={`${
+                        site.riskScore && site.riskScore > 80
+                          ? "bg-red-600/20 text-red-600 border-red-500"
+                          : site.riskScore && site.riskScore > 50
+                            ? "bg-yellow-800/20 text-yellow-600/80 border-yellow-500"
+                            : "bg-green-600/20 text-green-600 border-green-500"
+                      }`}
+                    >
+                      {site.riskScore ?? "—"}%
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <MoreHorizontal size={16} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-end items-center gap-2 mt-3 text-sm text-[color:var(--muted)]">
+            <button
+              onClick={goPrev}
+              disabled={currentPage === 1}
+              className="p-2 rounded hover:bg-muted/5 disabled:opacity-50 flex items-center justify-center"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <span className="px-2">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={goNext}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded hover:bg-muted/5 disabled:opacity-50 flex items-center justify-center"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {selected && (
+        <CookieSiteCard
+          currentSite={selected}
+          open={!!selected}
+          onOpenChange={() => setSelected(null)}
+        />
+      )}
+    </>
+  );
+};

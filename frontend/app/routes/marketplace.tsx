@@ -155,9 +155,9 @@ export const MarketplacePage: React.FC = () => {
         />
         <aside>
           <div className="bg-[color:var(--card)] p-4 rounded-lg shadow mb-4">
-            <h3 className="text-lg font-semibold text-[color:var(--text)]">
+            <h2 className="text-lg font-semibold text-[color:var(--text)]">
               My Benefits
-            </h3>
+            </h2>
             <div className="mt-3 flex flex-col gap-2">
               {benefits.length === 0 && (
                 <div className="text-[color:var(--muted)]">
@@ -166,34 +166,22 @@ export const MarketplacePage: React.FC = () => {
               )}
 
               {benefits.map((b) => (
-                <div
-                  key={b.id}
-                  className="p-2 rounded border border-transparent hover:border-slate-500/10"
-                >
-                  <div className="text-sm font-medium">{b.benefit}</div>
-                  <div className="text-xs text-[color:var(--muted)]">
-                    Status: {b.status}
-                  </div>
-                  <div className="text-xs text-[color:var(--muted)]">
-                    Expires:{" "}
-                    {b.expiresAt
-                      ? new Date(b.expiresAt).toLocaleDateString()
-                      : "—"}
-                  </div>
-                </div>
+                <BenefitCard b={b} />
               ))}
             </div>
           </div>
 
           <div className="bg-[color:var(--card)] p-4 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-[color:var(--text)]">
+            <h2 className="text-lg font-semibold text-[color:var(--text)]">
               Recent Audit Activity
-            </h3>
+            </h2>
             <div className="mt-3 text-sm text-[color:var(--muted)]">
               {auditLogs.slice(0, 6).map((a) => (
                 <div key={a.id} className="py-1">
-                  <div className="text-xs">{a.message}</div>
-                  <div className="text-2xs text-[color:var(--muted)]">
+                  <div className="text-sm text-[var(--sea-dark-700)]">
+                    {a.message}
+                  </div>
+                  <div className="text-xs text-gray-500">
                     {new Date(a.timestamp).toLocaleString()}
                   </div>
                 </div>
@@ -204,12 +192,12 @@ export const MarketplacePage: React.FC = () => {
       </div>
 
       {/* preview block for embedding on Dashboard can reuse MarketplacePreview component */}
-      <div className="max-w-6xl mx-auto mt-6">
+      {/* <div className="max-w-6xl mx-auto mt-6">
         <MarketplacePreview
           offers={offers.slice(0, 3)}
           onAccept={(id) => handleAccept(id)}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -288,5 +276,54 @@ const ViewDetailsDialog = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+};
+
+import { Calendar, CheckCircle, XCircle } from "lucide-react"; // Importing Lucide icons
+import { Badge } from "../components/ui/badge";
+
+const BenefitCard = ({
+  b,
+}: {
+  b: { id: string; benefit: string; status: string; expiresAt: string | null };
+}) => {
+  const statusIcon =
+    b.status === "issued" ? (
+      <CheckCircle className="h-4 w-4 text-green-500" />
+    ) : (
+      <XCircle className="h-4 w-4 text-red-500" />
+    );
+  const expiryDate = b.expiresAt
+    ? new Date(b.expiresAt).toLocaleDateString()
+    : "—";
+
+  return (
+    <div
+      key={b.id}
+      className="p-4 rounded-lg border border-border hover:border-slate-500/10 transition-all"
+    >
+      <div className="flex items-center space-x-2 mb-2">
+        <h3 className="text-lg font-semibold text-gray-800">{b.benefit}</h3>
+        {b.status === "issued" ? (
+          <Badge className="bg-green-200 text-green-800 text-xs px-2 py-1 rounded-full">
+            Active
+          </Badge>
+        ) : (
+          <Badge className="bg-red-200 text-red-800 text-xs px-2 py-1 rounded-full">
+            Inactive
+          </Badge>
+        )}
+      </div>
+
+      <div className="text-sm text-gray-500 mb-2 flex items-center space-x-1">
+        {statusIcon}
+        <span>Status: {b.status}</span>
+      </div>
+
+      <div className="text-sm text-gray-500 flex items-center space-x-1">
+        <Calendar className="h-4 w-4 text-muted-foreground" />
+        <span>Expires: {expiryDate}</span>
+      </div>
+    </div>
   );
 };

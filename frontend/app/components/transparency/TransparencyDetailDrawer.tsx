@@ -1,3 +1,4 @@
+// src/components/TransparencyDetailDrawer.tsx
 import React from "react";
 import {
   Drawer,
@@ -62,16 +63,11 @@ export const TransparencyDetailDrawer: React.FC<Props> = ({
               </div>
 
               <div>
-                {/* <div className="text-sm text-[color:var(--muted)]">Fields</div>
-                <div className="text-xs">{(log as any).fields?.join(", ") ?? "—"}</div> */}
-              </div>
-
-              <div>
                 <div className="text-sm text-[color:var(--muted)]">Status</div>
                 <div className="text-xs">{log.status ?? "—"}</div>
               </div>
 
-              <RecommendedActions category={log.category as any} />
+              <RecommendedActions category={log.category as any} log={log} />
             </>
           )}
         </div>

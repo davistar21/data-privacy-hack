@@ -50,34 +50,6 @@ const Dashboard: React.FC = () => {
         onAccept={(id) => handleAccept(id)}
       />
       <ConsentPreview />
-      <div className="max-w-6xl mx-auto grid grid-cols-12 gap-6">
-        <div className="col-span-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-[color:var(--text)]">
-              Citizen Privacy Assistant
-            </h1>
-          </div>
-
-          {/* Incident banner - for now we pass mocked empty array; later populate */}
-          <IncidentBanner incidents={["Hello"]} />
-          <ConsentSection mode="preview" />
-          {/* <TransparencyLog mode="full" /> */}
-          <div className="max-w-6xl mx-auto mt-6"></div>
-          <div className="grid grid-cols-1 gap-4">
-            {consents.map((c) => (
-              <OrgCard key={c.id} consent={c} />
-            ))}
-          </div>
-        </div>
-        <aside className="col-span-4 space-y-4">
-          <div className="bg-[color:var(--card)] p-4 rounded-lg shadow">
-            {/* <ConsentChart /> */}
-          </div>
-
-          {/* <TransparencyLog /> */}
-          {/* <WebPrivacyCompanion /> */}
-        </aside>
-      </div>
     </div>
   );
 };
@@ -116,18 +88,6 @@ export const ConsentPreview = () => {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-        {/* Chart Overview */}
-        {/* <Card className="bg-[color:var(--card-foreground)]/5 border border-slate-800/20 rounded-xl shadow-sm">
-          <CardHeader className="pb-1">
-            <CardTitle className="text-xs text-[color:var(--muted)] font-normal">
-              Consent Distribution
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ConsentChart />
-          </CardContent>
-        </Card> */}
-
         {/* Timeline */}
         <Card className="bg-[color:var(--card-foreground)]/5 border border-slate-800/20 rounded-xl shadow-sm">
           <CardHeader className="pb-1">
@@ -140,16 +100,6 @@ export const ConsentPreview = () => {
           </CardContent>
         </Card>
       </CardContent>
-
-      {/* Quick Active Consent Cards */}
-      <motion.div
-        layout
-        className="grid grid-cols-1 lg:grid-cols-3 gap-3 p-4 pt-2"
-      >
-        {active.map((c) => (
-          <OrgCard key={c.id} consent={c} />
-        ))}
-      </motion.div>
     </Card>
   );
 };
