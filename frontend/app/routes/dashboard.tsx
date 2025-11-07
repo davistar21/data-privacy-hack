@@ -45,10 +45,12 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen p-2 md:p-6">
       <CitizenDashboard />
+      <h2 className="ml-3 mt-4 mb-2">Market</h2>
       <MarketplacePreview
         offers={offers.slice(0, 3)}
         onAccept={(id) => handleAccept(id)}
       />
+      <div className="mb-4"></div>
       <ConsentPreview />
     </div>
   );

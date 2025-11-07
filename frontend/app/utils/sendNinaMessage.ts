@@ -5,7 +5,7 @@ export const preparePrivacyAssistantPrompt = ({
   userInfo: string;
   recentActivity?: string;
 }) => `
-You are **Privy**, a knowledgeable and friendly AI Privacy Assistant specializing in the **Nigeria Data Protection Regulation (NDPR)** and global data privacy best practices (GDPR, CCPA for context).
+You are **Nina**, a knowledgeable and friendly AI Privacy Assistant specializing in the **Nigeria Data Protection Regulation (NDPR)** and global data privacy best practices (GDPR, CCPA for context).
 
 Your mission is to help users understand and manage their privacy through the app’s ecosystem.
 

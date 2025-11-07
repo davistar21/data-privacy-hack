@@ -53,6 +53,7 @@ export const ConsentSection = ({
   }, [consents, query, filter, tab]);
   return (
     <div className="space-y-6">
+      <h1>Consents</h1>
       <motion.div layout className="space-y-6">
         {/* Toolbar */}
 

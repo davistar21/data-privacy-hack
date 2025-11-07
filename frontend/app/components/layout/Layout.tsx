@@ -30,7 +30,7 @@ export default function MyLayout({ children }: { children: React.ReactNode }) {
       {!onHomePage && (!isAdmin ? <Chatbot /> : <AdminChatbot />)}
       <div className="w-full">
         {!onHomePage && <Header isAdmin={isAdmin} />}
-        <div className="pt-24 md:pt-16 bg-white">
+        <div className="py-24 md:pt-16 bg-white">
           <main
             className={` bg-white min-h-screen ${!onHomePage ? "md:p-6" : ""}`}
           >

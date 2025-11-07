@@ -1,7 +1,11 @@
 import WebPrivacyCompanion from "../components/WebPrivacyCompanion";
 
 const WebPrivacyCompanionCookies = () => {
-  return <WebPrivacyCompanion mode="full" />;
+  return (
+    <div className="max-w-6xl mx-auto p-2 md:p-6">
+      <WebPrivacyCompanion mode="full" />
+    </div>
+  );
 };
 
 export default WebPrivacyCompanionCookies;

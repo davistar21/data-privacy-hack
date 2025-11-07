@@ -24,6 +24,11 @@ export const HeaderNotification: React.FC = () => {
   } = useNotificationStore();
 
   const [open, setOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
   const unread = getUnreadCount();
   const latestItems = latest();
 
@@ -36,7 +41,7 @@ export const HeaderNotification: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <button className="relative p-1 rounded-full hover:bg-[color:var(--sea-dark-100)] dark:hover:bg-[color:var(--sea-dark-700)] transition-colors">
           <Bell className="w-6 h-6 text-[color:var(--text)]" />
-          {unread > 0 && (
+          {hydrated && unread > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
               {unread > 9 ? "9+" : unread}
             </span>

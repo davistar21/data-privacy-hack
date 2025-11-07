@@ -14,7 +14,7 @@ export default function OverviewPage() {
   const incidents = logs.filter((l) => l.type === "incident");
 
   return (
-    <div className="space-y-6 xs:p-2 sm:p-6">
+    <div className="space-y-6 xs:p-2 sm:p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-gray-800">
           {formatText(orgs.find((o) => o.id == orgId)?.name!, "capitalize")}
@@ -286,49 +286,104 @@ export function DataRegistryPage() {
   );
 }
 
-// src/pages/admin/AuditLogsPage.tsx
+import { useState, useMemo } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ArrowUpDown,
+} from "lucide-react";
 
 export function AuditLogsPage() {
   const { auditLogs, loadLogs } = useConsentStore();
   const { orgId } = useParams();
+
+  // 🔹 Pagination + Sorting State
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  const pageSizeOptions = [5, 10, 20, 50];
+
+  // 🔹 Load logs
   useEffect(() => {
     loadLogs();
-  }, []);
+  }, [loadLogs]);
+
+  // 🔹 Filter & sort logs
+  const filteredLogs = useMemo(() => {
+    return auditLogs
+      .filter((a) => a.orgId === orgId)
+      .sort((a, b) =>
+        sortDir === "desc"
+          ? new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          : new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+  }, [auditLogs, orgId, sortDir]);
+
+  // 🔹 Paginate
+  const pageCount = Math.ceil(filteredLogs.length / pageSize);
+  const paginated = filteredLogs.slice(
+    pageIndex * pageSize,
+    (pageIndex + 1) * pageSize
+  );
+
+  const toggleSort = () =>
+    setSortDir((prev) => (prev === "desc" ? "asc" : "desc"));
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Audit Logs</h1>
-      <p className="text-gray-500">
-        View all audit events across {formatText(orgId!, "capitalize")}
-      </p>
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Audit Logs</h1>
+        <p className="text-sm text-muted-foreground">
+          View all audit events across {formatText(orgId!, "capitalize")}
+        </p>
+      </div>
 
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
+      {/* Table */}
+      <div className="overflow-x-auto border border-border rounded-lg shadow-sm">
+        <table className="min-w-full divide-y divide-border text-sm">
+          <thead className="bg-muted/40 text-left">
             <tr>
-              <th className="px-4 py-2 text-left">Timestamp</th>
-              <th className="px-4 py-2 text-left">Organization</th>
-              <th className="px-4 py-2 text-left">Type</th>
-              <th className="px-4 py-2 text-left">Message</th>
-              <th className="px-4 py-2 text-left">Status</th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">
+                Timestamp
+              </th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">
+                Organization
+              </th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">
+                Type
+              </th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">
+                Message
+              </th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">
+                Status
+              </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            {auditLogs
-              .filter((a) => a.orgId == orgId)
-              .map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2">
+          <tbody className="divide-y divide-border bg-background">
+            {paginated.length > 0 ? (
+              paginated.map((log) => (
+                <tr
+                  key={log.id}
+                  className="hover:bg-muted/50 transition-colors"
+                >
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 capitalize">
                     {formatText(log.orgId, "capitalize")}
                   </td>
-                  <td className="px-4 py-2">{log.type}</td>
-                  <td className="px-4 py-2">{log.message}</td>
+                  <td className="px-4 py-2">{formatText(log.type)}</td>
+                  <td className="px-4 py-2 max-w-[300px] truncate">
+                    {log.message}
+                  </td>
                   <td className="px-4 py-2">
                     <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
                         log.status === "pending"
                           ? "bg-yellow-100 text-yellow-800"
                           : log.status === "completed"
@@ -340,9 +395,98 @@ export function AuditLogsPage() {
                     </span>
                   </td>
                 </tr>
-              ))}
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="text-center text-muted-foreground py-6"
+                >
+                  No logs found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Bar */}
+      <div className="mt-3 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-border pt-3">
+        {/* Info */}
+        <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+          Showing {pageIndex * pageSize + 1} –{" "}
+          {Math.min((pageIndex + 1) * pageSize, filteredLogs.length)} of{" "}
+          {filteredLogs.length}
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPageIndex(0)}
+            disabled={pageIndex === 0}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPageIndex(Math.max(0, pageIndex - 1))}
+            disabled={pageIndex === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="hidden md:block text-sm px-2">
+            {pageIndex + 1} of {pageCount}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPageIndex(Math.min(pageCount - 1, pageIndex + 1))}
+            disabled={pageIndex >= pageCount - 1}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPageIndex(pageCount - 1)}
+            disabled={pageIndex >= pageCount - 1}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+
+          {/* Page size selector */}
+          <select
+            aria-label="Rows per page"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPageIndex(0);
+            }}
+            className="ml-2 rounded-md border border-input bg-background px-2 py-1 text-sm focus:outline-none"
+          >
+            {pageSizeOptions.map((s) => (
+              <option key={s} value={s}>
+                {s} / page
+              </option>
+            ))}
+          </select>
+
+          {/* Sort Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSort}
+            className="ml-2 hidden md:flex items-center gap-1 text-sm"
+          >
+            <ArrowUpDown className="h-4 w-4" />
+            Sort: {sortDir === "desc" ? "Newest" : "Oldest"}
+          </Button>
+        </div>
       </div>
     </div>
   );

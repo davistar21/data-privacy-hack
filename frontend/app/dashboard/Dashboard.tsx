@@ -45,6 +45,7 @@ export default function CitizenDashboard() {
             <div className="px-4 lg:px-6">
               <ChartAreaInteractive />
             </div>
+            <h2 className="mt-4 ml-3">Transparency Logs</h2>
             <DataTable data={auditLogs} />
           </div>
         </div>

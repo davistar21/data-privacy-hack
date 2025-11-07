@@ -39,7 +39,7 @@ export default function WebPrivacyCompanion({
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[color:var(--card)] p-4 rounded-lg shadow"
+        className="bg-[color:var(--card)] md:p-4 rounded-lg shadow"
       >
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold">Web Privacy Companion</h3>
@@ -116,7 +116,7 @@ export const Dashboard: React.FC = () => {
   }, [loadSites]);
 
   return (
-    <div className="space-y-6 px-6">
+    <div className="space-y-6 px-6 md:px-2">
       <h1 className="text-3xl font-bold text-gray-800">Cookie Tracker</h1>
 
       <p className="mt-2 text-lg text-gray-600">
@@ -137,8 +137,10 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center gap-2 text-sm text-[color:var(--muted)] bg-gray-100 rounded-2xl px-2 py-3">
+      <div className="mt-6 flex items-start gap-2 text-sm text-[color:var(--muted)] bg-gray-100 rounded-2xl px-2 py-3">
+        <div className="w-12">
         <Info className="text-gray-500" />
+        </div>
         <p className="xs:truncate">
           The Companion can issue session-only permissions ("Allow once").
           Essential cookies must remain enabled for basic site functionality.

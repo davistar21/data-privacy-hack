@@ -42,7 +42,7 @@ const TopSection = () => {
   ];
 
   return (
-    <div className="hero py-12 bg-transparent relative">
+    <div className="hero py-12 px-2 md:px-6 bg-transparent relative">
       {/* Badge */}
       <span className="text-sm md:text-lg font-medium px-3 py-1 md:px-5 md:py-2 rounded-full mb-4 flex items-center gap-1 bg-gradient-dark w-fit ">
         <div className="w-[10px] h-[10px] rounded-full bg-gradient-to-r from-teal-400 to-teal-600 animate-pulse"></div>

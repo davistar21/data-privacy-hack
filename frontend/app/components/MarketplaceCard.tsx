@@ -34,13 +34,11 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
     : null;
 
   return (
-    <div className="bg-[color:var(--card)] p-4 rounded-xl shadow-md flex items-start gap-4">
+    <div className="bg-[color:var(--card)] p-4 rounded-xl shadow-md flex items-start gap-4 flex-col md:flex-row">
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-semibold text-[color:var(--text)]">
-              {offer.orgName}
-            </div>
+            <h2 className="">{offer.orgName}</h2>
             <div className="text-xs text-[color:var(--muted)] mt-1">
               {offer.summary}
             </div>
@@ -48,7 +46,7 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
 
           <div className="text-right">
             <div className="text-sm font-medium">{offer.benefit}</div>
-            <div className="text-xs text-[color:var(--muted)] flex items-center gap-1 mt-1">
+            <div className="text-xs text-[color:var(--muted)] flex items-center gap-1 mt-1  justify-end">
               <Calendar className="w-3 h-3" />
               <span>
                 {expiresIn !== null ? `${expiresIn}d left` : "No expiry"}
@@ -66,7 +64,7 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex md:flex-col gap-2">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => setOpen(true)}>Accept</Button>
@@ -86,9 +84,6 @@ export const MarketplaceCard: React.FC<Props> = ({ offer, onAccept }) => {
                 In exchange you will receive:{" "}
                 <span className="font-medium">{offer.benefit}</span>
               </div>
-              {/* <div className="text-xs text-[color:var(--muted)]">
-                You can undo this action for a short time after confirming.
-              </div> */}
             </div>
 
             <DialogFooter className="mt-4">

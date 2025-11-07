@@ -10,12 +10,15 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
 import { HeaderNotification } from "../HeaderNotification";
 import { useEffect, useState } from "react";
+import { Separator } from "../ui/separator";
 
 export function Header({ isAdmin = false }: { isAdmin?: boolean }) {
   const [isSticky, setIsSticky] = useState(false);
@@ -58,6 +61,46 @@ export function Header({ isAdmin = false }: { isAdmin?: boolean }) {
             <SearchBar placeholder="Search consents, organizations, etc." />
           </div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="flex">
+              {isAdmin ? <ShoppingBag /> : <Brain />}
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end">
+            {isAdmin ? (
+              <DropdownMenuItem
+                onClick={() => {
+                  window.location.href = "/dashboard";
+                }}
+              >
+                Return to User Dashboard
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-xs">
+                  Switch to Organisation View
+                </DropdownMenuLabel>
+                <Separator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    window.location.href = "/org/zenith";
+                  }}
+                >
+                  Zenith Bank
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    window.location.href = "/org/ecomshop";
+                  }}
+                >
+                  EcomShop
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* --- Right Section: Actions --- */}
         {!isAdmin && (

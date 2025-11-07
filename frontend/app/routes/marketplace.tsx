@@ -87,16 +87,16 @@ export const MarketplacePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-[color:var(--bg)]">
+    <div className="min-h-screen p-2 md:p-6 bg-[color:var(--bg)]">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4">
             <h1 className="text-2xl font-semibold text-[color:var(--text)]">
               Consent Marketplace
             </h1>
-            <div className="text-sm text-[color:var(--muted)]">
+            <Badge className="text-sm text-[var(--sea-dark-800)] border-[var(--sea-dark-600)] bg-[color:var(--sea-dark-200)] ml-auto">
               {offers.length} offers
-            </div>
+            </Badge>
           </div>
 
           <div className="mb-4 flex gap-3 items-center">

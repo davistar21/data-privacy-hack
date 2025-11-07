@@ -29,6 +29,7 @@ import {
 } from "../components/ui/drawer";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { useIsMobile } from "../hooks/use-mobile";
 
 const CATEGORY_LABEL: Record<CookieCategory, string> = {
   essential: "Essential",
@@ -106,9 +107,13 @@ export default function CookieSiteCard({
     setConfirming(null);
     await handleToggle(confirmedCategory!, "disabled");
   };
-
+  const isMobile = useIsMobile();
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      direction={isMobile ? "bottom" : "right"}
+    >
       <DrawerContent className="bg-white text-background border-border p-2 rounded-s-4xl">
         <DrawerHeader>
           <DrawerTitle>
